@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}我的书籍 - 校园二手书交易平台{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3><i class="bi bi-book"></i> 我的书籍</h3>
+        <a href="{{ url_for('books.create') }}" class="btn btn-primary">发布新书</a>
+    </div>
+    
+    <!-- 筛选 -->
+    <div class="mb-4">
+        <div class="btn-group" role="group">
+            <a href="{{ url_for('books.my_books', status='all') }}" 
+               class="btn btn-sm {{ 'btn-primary' if status == 'all' else 'btn-outline-primary' }}">全部</a>
+            <a href="{{ url_for('books.my_books', status='available') }}" 
+               class="btn btn-sm {{ 'btn-primary' if status == 'available' else 'btn-outline-primary' }}">在售</a>
+            <a href="{{ url_for('books.my_books', status='reserved') }}" 
+               class="btn btn-sm {{ 'btn-primary' if status == 'reserved' else 'btn-outline-primary' }}">已预订</a>
+            <a href="{{ url_for('books.my_books', status='sold') }}" 
+               class="btn btn-sm {{ 'btn-primary' if status == 'sold' else 'btn-outline-primary' }}">已售出</a>
+        </div>
+    </div>
+    
+    <!-- 书籍列表 -->
+    {% if books %}
+    <div class="row">
+        {% for book in books %}
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="card-title text-truncate">{{ book.title }}</h6>
+                    <p class="card-text small text-muted">{{ book.author or '未知作者' }}</p>
+                    <p class="price-tag">¥{{ book.listing_price }}</p>
+                    <p>
+                        {% if book.status == 'available' %}
+                        <span class="badge bg-success">在售</span>
+                        {% elif book.status == 'reserved' %}
+                        <span class="badge bg-warning">已预订</span>
+                        {% elif book.status == 'sold' %}
+                        <span class="badge bg-secondary">已售出</span>
+                        {% else %}
+                        <span class="badge bg-secondary">已下架</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{{ url_for('books.detail', book_id=book.id) }}" class="btn btn-sm btn-outline-primary">查看</a>
+                    {% if book.status == 'available' %}
+                    <a href="{{ url_for('books.edit', book_id=book.id) }}" class="btn btn-sm btn-outline-secondary">编辑</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+        <p class="text-muted mt-2">暂无书籍</p>
+        <a href="{{ url_for('books.create') }}" class="btn btn-primary">发布第一本书</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

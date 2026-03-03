@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}发布书籍 - 校园二手书交易平台{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> 发布书籍</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">书名 <span class="text-danger">*</span></label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">作者</label>
+                                <input type="text" name="author" class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">ISBN</label>
+                                <input type="text" name="isbn" class="form-control" placeholder="可用于智能定价">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">版本</label>
+                                <select name="edition" class="form-select">
+                                    <option value="latest">最新版</option>
+                                    <option value="recent" selected>近几年</option>
+                                    <option value="old">旧版</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">出版社</label>
+                                <input type="text" name="publisher" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">出版年份</label>
+                                <input type="number" name="publish_year" class="form-control" min="1900" max="2030">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">原价（元）</label>
+                                <input type="number" name="original_price" class="form-control" step="0.01" min="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">挂牌价格 <span class="text-danger">*</span></label>
+                                <input type="number" name="listing_price" class="form-control" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">新旧程度 <span class="text-danger">*</span></label>
+                                <select name="condition" class="form-select" required>
+                                    <option value="new">全新</option>
+                                    <option value="like_new">几乎全新</option>
+                                    <option value="good" selected>较好</option>
+                                    <option value="fair">一般</option>
+                                    <option value="poor">较差</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">分类 <span class="text-danger">*</span></label>
+                                <select name="category" class="form-select" required>
+                                    <option value="教材">教材</option>
+                                    <option value="小说">小说</option>
+                                    <option value="杂志">杂志</option>
+                                    <option value="工具书">工具书</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">描述</label>
+                            <textarea name="description" class="form-control" rows="4" placeholder="描述书籍的具体情况，如使用痕迹、笔记等"></textarea>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>智能定价：</strong>系统会根据书籍的新旧程度、版本、市场供需情况自动计算建议价格。
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">发布书籍</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

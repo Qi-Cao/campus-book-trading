@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}评价订单 - 校园二手书交易平台{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">评价订单</h4>
+                </div>
+                <div class="card-body">
+                    <p>书籍：<strong>{{ order.book.title }}</strong></p>
+                    <p>卖家：<strong>{{ order.seller_order.username }}</strong></p>
+                    <p>成交价：<span class="text-danger">¥{{ order.price }}</span></p>
+                    
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">评分</label>
+                            <div class="btn-group" role="group">
+                                {% for i in range(1, 6) %}
+                                <input type="radio" class="btn-check" name="rating" id="rating{{ i }}" value="{{ i }}" {{ 'checked' if i == 5 else '' }}>
+                                <label class="btn btn-outline-warning" for="rating{{ i }}">
+                                    {% for star in range(i) %}⭐{% endfor %}
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">评价内容（可选）</label>
+                            <textarea name="content" class="form-control" rows="4" placeholder="分享你的购买体验..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">提交评价</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

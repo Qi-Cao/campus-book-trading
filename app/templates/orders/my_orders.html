@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}我的订单 - 校园二手书交易平台{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h3 class="mb-4"><i class="bi bi-bag"></i> 我的订单</h3>
+    
+    <!-- 筛选 -->
+    <div class="mb-4">
+        <div class="btn-group" role="group">
+            <a href="{{ url_for('orders.my_orders', role='buyer', status='all') }}" 
+               class="btn btn-sm {{ 'btn-primary' if role == 'buyer' else 'btn-outline-primary' }}">
+                我买的
+            </a>
+            <a href="{{ url_for('orders.my_orders', role='seller', status='all') }}" 
+               class="btn btn-sm {{ 'btn-primary' if role == 'seller' else 'btn-outline-primary' }}">
+                我卖的
+            </a>
+        </div>
+        <div class="btn-group ms-2" role="group">
+            <a href="{{ url_for('orders.my_orders', role=role, status='all') }}" 
+               class="btn btn-sm {{ 'btn-success' if status == 'all' else 'btn-outline-secondary' }}">全部</a>
+            <a href="{{ url_for('orders.my_orders', role=role, status='pending') }}" 
+               class="btn btn-sm {{ 'btn-success' if status == 'pending' else 'btn-outline-secondary' }}">待确认</a>
+            <a href="{{ url_for('orders.my_orders', role=role, status='completed') }}" 
+               class="btn btn-sm {{ 'btn-success' if status == 'completed' else 'btn-outline-secondary' }}">已完成</a>
+        </div>
+    </div>
+    
+    <!-- 订单列表 -->
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>订单号</th>
+                    <th>书籍</th>
+                    <th>{{ '买家' if role == 'seller' else '卖家' }}</th>
+                    <th>金额</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><small>{{ order.order_no }}</small></td>
+                    <td>
+                        <a href="{{ url_for('books.detail', book_id=order.book_id) }}">{{ order.book.title }}</a>
+                    </td>
+                    <td>
+                        {% if role == 'buyer' %}
+                        {{ order.seller_order.username }}
+                        {% else %}
+                        {{ order.buyer.username }}
+                        {% endif %}
+                    </td>
+                    <td class="text-danger">¥{{ order.price }}</td>
+                    <td>
+                        {% if order.status == 'pending' %}
+                        <span class="badge bg-warning">待确认</span>
+                        {% elif order.status == 'confirmed' %}
+                        <span class="badge bg-info">已确认</span>
+                        {% elif order.status == 'paid' %}
+                        <span class="badge bg-primary">已付款</span>
+                        {% elif order.status == 'shipped' %}
+                        <span class="badge bg-info">已发货</span>
+                        {% elif order.status == 'completed' %}
+                        <span class="badge bg-success">已完成</span>
+                        {% elif order.status == 'cancelled' %}
+                        <span class="badge bg-secondary">已取消</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('orders.detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">查看</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+        <p class="text-muted mt-2">暂无订单</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

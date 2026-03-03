@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}智能定价计算器 - 校园二手书交易平台{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-calculator"></i> 智能定价计算器</h4>
+                </div>
+                <div class="card-body">
+                    <form id="pricingForm">
+                        <div class="mb-3">
+                            <label class="form-label">书籍原价（元）</label>
+                            <input type="number" id="original_price" class="form-control" step="0.01" min="0" placeholder="参考售价">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">新旧程度</label>
+                            <select id="condition" class="form-select">
+                                <option value="new">全新</option>
+                                <option value="like_new">几乎全新</option>
+                                <option value="good" selected>较好</option>
+                                <option value="fair">一般</option>
+                                <option value="poor">较差</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">版本</label>
+                            <select id="edition" class="form-select">
+                                <option value="latest">最新版</option>
+                                <option value="recent" selected>近几年</option>
+                                <option value="old">旧版</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">分类</label>
+                            <select id="category" class="form-select">
+                                <option value="教材" selected>教材</option>
+                                <option value="小说">小说</option>
+                                <option value="杂志">杂志</option>
+                                <option value="工具书">工具书</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">ISBN（可选，用于参考历史价格）</label>
+                            <input type="text" id="isbn" class="form-control" placeholder="如：978-7-111-54742-9">
+                        </div>
+                        
+                        <button type="button" class="btn btn-success w-100" onclick="calculatePrice()">
+                            <i class="bi bi-calculator"></i> 计算价格
+                        </button>
+                    </form>
+                    
+                    <!-- 计算结果 -->
+                    <div id="result" class="mt-4" style="display: none;">
+                        <div class="alert alert-success">
+                            <h5 class="alert-heading">定价建议</h5>
+                            <hr>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h6>最低价</h6>
+                                    <h4 class="text-muted" id="minPrice">-</h4>
+                                </div>
+                                <div class="col-4">
+                                    <h6>建议价</h6>
+                                    <h3 class="text-success" id="smartPrice">-</h3>
+                                </div>
+                                <div class="col-4">
+                                    <h6>最高价</h6>
+                                    <h4 class="text-muted" id="maxPrice">-</h4>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6>价格因素分析</h6>
+                                <p class="mb-1">新旧程度系数：<span id="conditionScore">-</span></p>
+                                <p class="mb-1">版本系数：<span id="editionScore">-</span></p>
+                                <p class="mb-0">市场供需系数：<span id="demandScore">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function calculatePrice() {
+    const data = {
+        original_price: parseFloat(document.getElementById('original_price').value) || 0,
+        condition: document.getElementById('condition').value,
+        edition: document.getElementById('edition').value,
+        category: document.getElementById('category').value,
+        isbn: document.getElementById('isbn').value
+    };
+    
+    fetch('/books/api/calculate-price', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            const d = result.data;
+            document.getElementById('minPrice').textContent = '¥' + d.min_price;
+            document.getElementById('smartPrice').textContent = '¥' + d.smart_price;
+            document.getElementById('maxPrice').textContent = '¥' + d.max_price;
+            document.getElementById('conditionScore').textContent = d.condition_score;
+            document.getElementById('editionScore').textContent = d.edition_score;
+            document.getElementById('demandScore').textContent = d.demand_score;
+            document.getElementById('result').style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('计算失败，请重试');
+    });
+}
+</script>
+{% endblock %}

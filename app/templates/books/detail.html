@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} - 书籍详情{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- 书籍图片 -->
+        <div class="col-md-4">
+            <div class="card">
+                {% if book.cover_image %}
+                <img src="{{ book.cover_image }}" class="card-img-top" alt="{{ book.title }}">
+                {% else %}
+                <div class="book-cover d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="bi bi-book text-muted" style="font-size: 6rem;"></i>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- 书籍信息 -->
+        <div class="col-md-8">
+            <h2>{{ book.title }}</h2>
+            <p class="text-muted">作者：{{ book.author or '未知' }}</p>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>ISBN：</strong></td>
+                            <td>{{ book.isbn or '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>版本：</strong></td>
+                            <td>{{ book.get_edition_display() }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>出版社：</strong></td>
+                            <td>{{ book.publisher or '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>出版年份：</strong></td>
+                            <td>{{ book.publish_year or '-' }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>原价：</strong></td>
+                            <td>{{ '¥%.2f'|format(book.original_price) if book.original_price else '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>新旧程度：</strong></td>
+                            <td><span class="badge bg-primary">{{ book.get_condition_display() }}</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>分类：</strong></td>
+                            <td>{{ book.category }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>浏览量：</strong></td>
+                            <td>{{ book.view_count }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 价格区域 -->
+            <div class="card bg-light mb-3">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h6 class="text-muted">挂牌价</h6>
+                            <h3 class="text-danger">¥{{ book.listing_price }}</h3>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">智能定价</h6>
+                            <h3 class="text-success">¥{{ book.smart_price or '-' }}</h3>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">节省</h6>
+                            <h3 class="text-info">
+                                {% if book.original_price %}
+                                {{ '%.0f'|format((1 - book.listing_price/book.original_price)*100) }}%
+                                {% else %}
+                                -
+                                {% endif %}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 描述 -->
+            {% if book.description %}
+            <div class="mb-3">
+                <h5>书籍描述</h5>
+                <p>{{ book.description }}</p>
+            </div>
+            {% endif %}
+            
+            <!-- 卖家信息 -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5><i class="bi bi-person"></i> 卖家信息</h5>
+                    <p>
+                        <strong>{{ book.seller.username }}</strong>
+                        <span class="badge bg-warning text-dark">信用分: {{ book.seller.credit_score }}</span>
+                    </p>
+                    <p class="text-muted small">在售书籍: {{ book.seller.books.count() }} | 已售: {{ book.seller.books.filter_by(status='sold').count() }}</p>
+                </div>
+            </div>
+            
+            <!-- 操作按钮 -->
+            {% if current_user.is_authenticated and current_user.id != book.seller_id and book.status == 'available' %}
+            <div class="d-flex gap-2">
+                <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#buyModal">
+                    <i class="bi bi-cart-plus"></i> 立即购买
+                </button>
+                <a href="{{ url_for('books.want', book_id=book.id) }}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-heart"></i> 想要
+                </a>
+            </div>
+            {% elif book.status != 'available' %}
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-circle"></i> 该书籍当前{{ '已售出' if book.status == 'sold' else '已下架' }}
+            </div>
+            {% endif %}
+            
+            {% if current_user.is_authenticated and current_user.id == book.seller_id %}
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('books.edit', book_id=book.id) }}" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> 编辑
+                </a>
+                <form method="POST" action="{{ url_for('books.delete', book_id=book.id) }}" onsubmit="return confirm('确定要下架这本书吗？')">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> 下架
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- 相似推荐 -->
+    {% if similar_books %}
+    <div class="mt-5">
+        <h4>相似书籍推荐</h4>
+        <div class="row">
+            {% for sb in similar_books %}
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title text-truncate">{{ sb.title }}</h6>
+                        <p class="price-tag">¥{{ sb.listing_price }}</p>
+                        <a href="{{ url_for('books.detail', book_id=sb.id) }}" class="btn btn-sm btn-outline-primary">查看</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- 购买弹窗 -->
+    {% if current_user.is_authenticated and current_user.id != book.seller_id %}
+    <div class="modal fade" id="buyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认购买</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{{ url_for('orders.create', book_id=book.id) }}">
+                    <div class="modal-body">
+                        <p>您即将购买：<strong>{{ book.title }}</strong></p>
+                        <p>价格：<strong class="text-danger">¥{{ book.listing_price }}</strong></p>
+                        <div class="mb-3">
+                            <label class="form-label">您的联系方式</label>
+                            <input type="text" name="contact_info" class="form-control" placeholder="手机号或微信" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-success">确认购买</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
