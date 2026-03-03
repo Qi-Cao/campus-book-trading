@@ -54,6 +54,11 @@ class Book(db.Model):
     description = db.Column(db.Text)
     cover_image = db.Column(db.String(255))  # 封面图片路径
     
+    # AI识别结果（百炼大模型）
+    ai_condition = db.Column(db.String(20))  # AI评估的新旧程度
+    ai_condition_reason = db.Column(db.Text)  # AI评估依据
+    ai_analyzed = db.Column(db.Boolean, default=False)  # 是否已通过AI分析
+    
     # 价格相关
     original_price = db.Column(db.Float)  # 原价
     listing_price = db.Column(db.Float, nullable=False)  # 挂牌价

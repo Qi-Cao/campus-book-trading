@@ -1,14 +1,100 @@
 """
 书籍路由 - 书籍发布、详情、搜索
 """
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, send_from_directory, current_app
 from flask_login import login_required, current_user
 from app.models.models import db, Book, User
 from app.utils.smart_pricing import calculate_smart_price, SmartPricing
+from app.utils.dashscope_helper import analyze_book_image
 from config import Config
+from werkzeug.utils import secure_filename
 import os
+import uuid
 
 books_bp = Blueprint('books', __name__, url_prefix='/books')
+
+
+def allowed_file(filename):
+    """检查文件扩展名是否允许"""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
+
+
+def save_uploaded_file(file):
+    """保存上传的文件"""
+    if file and allowed_file(file.filename):
+        # 生成唯一文件名
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        filename = f"{uuid.uuid4().hex}.{ext}"
+        
+        # 确保上传目录存在
+        upload_folder = os.path.join(current_app.root_path, '..', Config.UPLOAD_FOLDER)
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        # 保存文件
+        filepath = os.path.join(upload_folder, filename)
+        file.save(filepath)
+        
+        return filename
+    return None
+
+
+@books_bp.route('/upload', methods=['POST'])
+@login_required
+def upload_image():
+    """处理图片上传（AJAX）"""
+    if 'image' not in request.files:
+        return jsonify({'success': False, 'error': 'No file provided'})
+    
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'success': False, 'error': 'No file selected'})
+    
+    filename = save_uploaded_file(file)
+    if not filename:
+        return jsonify({'success': False, 'error': 'Invalid file type'})
+    
+    # 返回文件路径
+    return jsonify({
+        'success': True,
+        'filename': filename,
+        'url': url_for('books.uploaded_file', filename=filename)
+    })
+
+
+@books_bp.route('/uploads/<filename>')
+def uploaded_file(filename):
+    """提供上传的文件"""
+    upload_folder = os.path.join(current_app.root_path, '..', Config.UPLOAD_FOLDER)
+    return send_from_directory(upload_folder, filename)
+
+
+@books_bp.route('/analyze-image', methods=['POST'])
+@login_required
+def analyze_image():
+    """AI分析书籍图片（OCR + 新旧程度评估）"""
+    # 获取图片数据
+    image_data = request.json.get('image_data')  # base64
+    filename = request.json.get('filename')
+    
+    if not image_data and not filename:
+        return jsonify({'success': False, 'error': 'No image provided'})
+    
+    # 调用AI分析
+    try:
+        if filename:
+            # 从文件分析
+            upload_folder = os.path.join(current_app.root_path, '..', Config.UPLOAD_FOLDER)
+            filepath = os.path.join(upload_folder, filename)
+            result = analyze_book_image(image_path=filepath)
+        elif image_data:
+            # 从base64分析
+            result = analyze_book_image(image_base64=image_data)
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 
 
 @books_bp.route('/create', methods=['GET', 'POST'])
@@ -24,19 +110,31 @@ def create():
         publisher = request.form.get('publisher')
         publish_year = request.form.get('publish_year', type=int)
         original_price = request.form.get('original_price', type=float)
-        condition = request.form.get('condition')
+        condition = request.form.get('condition')  # 用户选择的新旧程度
+        ai_condition = request.form.get('ai_condition')  # AI识别的新旧程度
         category = request.form.get('category')
         description = request.form.get('description')
         listing_price = request.form.get('listing_price', type=float)
+        
+        # 处理图片上传
+        cover_image = None
+        if 'cover_image' in request.files:
+            file = request.files['cover_image']
+            cover_image = save_uploaded_file(file)
         
         if not title or not listing_price:
             flash('请填写书籍名称和价格', 'danger')
             return render_template('books/create.html')
         
+        # 确定最终新旧程度（优先使用用户选择的，如果没有就用AI识别的）
+        final_condition = condition if condition else ai_condition
+        if not final_condition:
+            final_condition = 'good'  # 默认值
+        
         # 计算智能定价
         book_data = {
             'original_price': original_price,
-            'condition': condition,
+            'condition': final_condition,
             'edition': edition,
             'category': category,
             'isbn': isbn
@@ -53,11 +151,14 @@ def create():
             publisher=publisher,
             publish_year=publish_year,
             original_price=original_price,
-            condition=condition,
+            condition=final_condition,
             category=category,
             description=description,
             listing_price=listing_price,
             smart_price=pricing_result['smart_price'],
+            cover_image=cover_image,
+            ai_condition=ai_condition,
+            ai_analyzed=True if ai_condition else False,
             seller_id=current_user.id,
             status='available'
         )

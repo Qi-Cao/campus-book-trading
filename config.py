@@ -1,10 +1,14 @@
 import os
+from dotenv import load_dotenv
+
+# 加载环境变量
+load_dotenv()
 
 class Config:
     """应用配置"""
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'campus-book-trading-secret-key-2026'
     
-    # MySQL 数据库配置
+    # ==================== 数据库配置 ====================
     MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'localhost'
     MYSQL_PORT = os.environ.get('MYSQL_PORT') or '3306'
     MYSQL_USER = os.environ.get('MYSQL_USER') or 'root'
@@ -13,6 +17,10 @@ class Config:
     
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # ==================== 百炼AI配置 ====================
+    # 申请地址: https://dashscope.console.aliyun.com/
+    DASHSCOPE_API_KEY = os.environ.get('DASHSCOPE_API_KEY') or ''
     
     # 分页配置
     BOOKS_PER_PAGE = 12
@@ -40,3 +48,8 @@ class Config:
         # 基础价格参考
         'base_price_range': (5, 100),  # 最低最高定价
     }
+    
+    # 文件上传配置
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or 'uploads'
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
