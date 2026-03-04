@@ -3,31 +3,33 @@
 {% block title %}发布书籍 - 校园二手书交易平台{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row">
-        <div class="col-md-10 mx-auto">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> 发布书籍</h4>
-                </div>
-                <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data" id="bookForm">
-                        <!-- AI智能识别区域 -->
-                        <div class="alert alert-info mb-4">
-                            <h5><i class="bi bi-robot"></i> AI智能识别（可选）</h5>
-                            <p class="mb-2">上传书籍照片（支持多张），AI自动识别书名、作者、ISBN、出版社，并评估新旧程度</p>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">选择图片（可多选）</label>
-                                <input type="file" class="form-control" id="bookImages" accept="image/*" multiple onchange="previewImages(this)">
-                                <small class="text-muted">提示：可以上传多张图片，信息更全面</small>
-                            </div>
-                            
-                            <!-- 图片预览区 -->
-                            <div id="imagePreviewContainer" class="mb-3" style="display: none;">
-                                <label class="form-label">已选择图片：</label>
-                                <div class="d-flex flex-wrap gap-2" id="imagePreviewList"></div>
-                            </div>
+<div class="container py-3" style="max-width: 600px;">
+    <div class="d-flex align-items-center mb-3">
+        <a href="{{ url_for('main.index') }}" class="text-decoration-none me-3">
+            <i class="bi bi-arrow-left" style="font-size: 20px;"></i>
+        </a>
+        <h5 class="mb-0 fw-bold">发布书籍</h5>
+    </div>
+    
+    <div class="card-tiktok">
+        <div class="card-body-tiktok">
+            <form method="POST" enctype="multipart/form-data" id="bookForm">
+                <!-- AI智能识别区域 -->
+                <div class="mb-4 p-3" style="background: #f5f5f5; border-radius: 12px;">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-robot me-2" style="color: #6b4ceb;"></i>
+                        <span class="fw-bold">AI智能识别</span>
+                    </div>
+                    <p class="text-muted mb-2" style="font-size: 13px;">上传书籍照片，AI自动识别信息</p>
+                    
+                    <div class="mb-3">
+                        <input type="file" class="form-control-tiktok" id="bookImages" accept="image/*" multiple onchange="previewImages(this)">
+                    </div>
+                    
+                    <!-- 图片预览区 -->
+                    <div id="imagePreviewContainer" class="mb-2" style="display: none;">
+                        <div class="d-flex flex-wrap gap-2" id="imagePreviewList"></div>
+                    </div>
                             
                             <div class="row align-items-center">
                                 <div class="col-md-6">
