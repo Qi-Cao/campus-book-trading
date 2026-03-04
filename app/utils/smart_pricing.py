@@ -27,37 +27,54 @@ class SmartPricing:
         返回:
             dict: 包含定价信息的字典
         """
-        # 1. 获取基础价格
-        base_price = self._get_base_price(book_data)
-        
-        # 2. 新旧程度系数
-        condition_multiplier = self._get_condition_multiplier(book_data.get('condition', 'good'))
-        
-        # 3. 版本系数
-        edition_multiplier = self._get_edition_multiplier(book_data.get('edition', 'recent'))
-        
-        # 4. 市场供需系数
-        demand_multiplier = self._get_demand_multiplier(
-            book_data.get('isbn'),
-            book_data.get('category')
-        )
-        
-        # 5. 综合计算
-        smart_price = base_price * condition_multiplier * edition_multiplier * demand_multiplier
-        
-        # 6. 价格修正（确保在合理范围内）
-        smart_price = self._adjust_price(smart_price, base_price)
-        
-        # 7. 返回价格区间和建议价
-        return {
-            'base_price': base_price,
-            'smart_price': round(smart_price, 2),
-            'min_price': round(smart_price * 0.8, 2),
-            'max_price': round(smart_price * 1.2, 2),
-            'condition_score': condition_multiplier,
-            'edition_score': edition_multiplier,
-            'demand_score': demand_multiplier
-        }
+        try:
+            # 1. 获取基础价格
+            base_price = self._get_base_price(book_data)
+            
+            # 2. 新旧程度系数
+            condition_multiplier = self._get_condition_multiplier(book_data.get('condition', 'good'))
+            
+            # 3. 版本系数
+            edition_multiplier = self._get_edition_multiplier(book_data.get('edition', 'recent'))
+            
+            # 4. 市场供需系数（添加错误处理）
+            try:
+                demand_multiplier = self._get_demand_multiplier(
+                    book_data.get('isbn'),
+                    book_data.get('category')
+                )
+            except Exception:
+                demand_multiplier = 1.0  # 数据库不可用时使用默认值
+            
+            # 5. 综合计算
+            smart_price = base_price * condition_multiplier * edition_multiplier * demand_multiplier
+            
+            # 6. 价格修正（确保在合理范围内）
+            smart_price = self._adjust_price(smart_price, base_price)
+            
+            # 7. 返回价格区间和建议价
+            return {
+                'base_price': base_price,
+                'smart_price': round(smart_price, 2),
+                'min_price': round(smart_price * 0.8, 2),
+                'max_price': round(smart_price * 1.2, 2),
+                'condition_score': condition_multiplier,
+                'edition_score': edition_multiplier,
+                'demand_score': demand_multiplier
+            }
+        except Exception as e:
+            # 如果计算出错，返回默认值
+            base_price = self._get_base_price(book_data)
+            return {
+                'base_price': base_price,
+                'smart_price': round(base_price * 0.5, 2),
+                'min_price': round(base_price * 0.3, 2),
+                'max_price': round(base_price * 0.7, 2),
+                'condition_score': 0.7,
+                'edition_score': 0.85,
+                'demand_score': 1.0,
+                'error': str(e)
+            }
     
     def _get_base_price(self, book_data):
         """获取基础价格"""
