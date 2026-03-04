@@ -6,3 +6,4 @@ cryptography==41.0.4
 Werkzeug==2.3.7
 python-dotenv==1.0.0
 dashscope>=1.14.0
+--only-binary :all: greenlet

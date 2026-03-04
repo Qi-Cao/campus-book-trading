@@ -1,7 +1,14 @@
 from flask import Flask
 from config import Config
-from app.models.models import db
+from app.models.models import db, User
+from flask_login import LoginManager
 import os
+
+login_manager = LoginManager()
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 def create_app(config_class=Config):
     """应用工厂函数"""
@@ -10,6 +17,11 @@ def create_app(config_class=Config):
     
     # 初始化数据库
     db.init_app(app)
+    
+    # 初始化登录管理器
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = '请先登录'
     
     # 注册蓝图
     from app.routes.auth import auth_bp
