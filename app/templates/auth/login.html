@@ -3,35 +3,38 @@
 {% block title %}登录 - 校园二手书交易平台{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <h3 class="text-center mb-4">
-                        <i class="bi bi-person-circle"></i> 登录
-                    </h3>
-                    <form method="POST">
-                        <div class="mb-3">
-                            <label class="form-label">用户名</label>
-                            <input type="text" name="username" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">密码</label>
-                            <input type="password" name="password" class="form-control" required>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" name="remember" class="form-check-input" id="remember">
-                            <label class="form-check-label" for="remember">记住我</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">登录</button>
-                    </form>
-                    <hr>
-                    <p class="text-center mb-0">
-                        还没有账号？ <a href="{{ url_for('auth.register') }}">立即注册</a>
-                    </p>
+<div class="container py-5" style="max-width: 400px;">
+    <!-- Logo -->
+    <div class="text-center mb-4">
+        <div class="rounded-circle bg-gradient d-inline-flex align-items-center justify-content-center" 
+             style="width: 64px; height: 64px; background: linear-gradient(135deg, #6b4ceb, #8b5cf6);">
+            <i class="bi bi-book-half text-white" style="font-size: 28px;"></i>
+        </div>
+        <h5 class="mt-3 fw-bold">校园二手书</h5>
+        <p class="text-muted" style="font-size: 13px;">让书籍循环，让知识传递</p>
+    </div>
+    
+    <div class="card-tiktok">
+        <div class="card-body-tiktok">
+            <h5 class="text-center mb-4 fw-bold">登录</h5>
+            <form method="POST">
+                <div class="mb-3">
+                    <input type="text" name="username" class="form-control-tiktok" placeholder="用户名" required>
                 </div>
-            </div>
+                <div class="mb-3">
+                    <input type="password" name="password" class="form-control-tiktok" placeholder="密码" required>
+                </div>
+                <div class="form-check mb-3">
+                    <input type="checkbox" name="remember" class="form-check-input" id="remember">
+                    <label class="form-check-label text-muted" for="remember" style="font-size: 13px;">记住我</label>
+                </div>
+                <button type="submit" class="btn btn-tiktok w-100 py-2">登录</button>
+            </form>
+            <hr>
+            <p class="text-center mb-0" style="font-size: 13px;">
+                还没有账号？
+                <a href="{{ url_for('auth.register') }}" style="color: #6b4ceb; text-decoration: none;">立即注册</a>
+            </p>
         </div>
     </div>
 </div>
