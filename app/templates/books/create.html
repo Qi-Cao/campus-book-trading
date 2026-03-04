@@ -344,7 +344,8 @@ async function analyzeBookImages() {
 // 自动计算智能定价
 async function calculateSmartPrice(condition) {
     try {
-        const originalPrice = document.getElementById('inputOriginalPrice')?.value || null;
+        const originalPriceInput = document.getElementById('inputOriginalPrice')?.value;
+        const originalPrice = originalPriceInput ? parseFloat(originalPriceInput) : null;
         const isbn = document.getElementById('inputIsbn')?.value || null;
         const category = document.querySelector('select[name="category"]')?.value || '其他';
         const edition = document.querySelector('select[name="edition"]')?.value || 'recent';
@@ -355,7 +356,7 @@ async function calculateSmartPrice(condition) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                original_price: originalPrice ? parseFloat(originalPrice) : null,
+                original_price: originalPrice,
                 condition: condition,
                 edition: edition,
                 category: category,

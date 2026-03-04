@@ -80,9 +80,15 @@ class SmartPricing:
         """获取基础价格"""
         original_price = book_data.get('original_price')
         
-        if original_price and original_price > 0:
-            # 有原价时，默认为原价的 30-50%
-            return original_price * 0.4
+        # 确保 original_price 是有效的数字
+        if original_price is not None and original_price != '' and original_price != 'null':
+            try:
+                original_price = float(original_price)
+                if original_price > 0:
+                    # 有原价时，默认为原价的 30-50%
+                    return original_price * 0.4
+            except (ValueError, TypeError):
+                pass
         
         # 没有原价时，基于分类估算
         category_prices = {
