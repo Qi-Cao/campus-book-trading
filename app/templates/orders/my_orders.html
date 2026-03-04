@@ -128,37 +128,41 @@
                             {% endif %}
                         </div>
                         
-                        <!-- 操作按钮 - 直接显示在外面 -->
+                        <!-- 操作按钮 - 直接显示在外面 (使用表单POST) -->
                         <div class="col-lg-2 col-6 mt-3 mt-lg-0 text-lg-end">
                             <small class="text-muted d-block">操作</small>
                             <div class="btn-group-vertical btn-group-sm gap-1">
                                 <!-- 买家操作 -->
                                 {% if order.buyer_id == current_user.id %}
                                     {% if order.status == 'confirmed' %}
-                                        <a href="{{ url_for('orders.confirm_payment', order_id=order.id) }}" 
-                                           class="btn btn-primary btn-sm rounded-pill">
-                                            <i class="bi bi-credit-card me-1"></i>确认付款
-                                        </a>
+                                        <form method="POST" action="{{ url_for('orders.pay', order_id=order.id) }}" style="display:inline;">
+                                            <button type="submit" class="btn btn-primary btn-sm rounded-pill w-100">
+                                                <i class="bi bi-credit-card me-1"></i>确认付款
+                                            </button>
+                                        </form>
                                     {% elif order.status == 'shipped' %}
-                                        <a href="{{ url_for('orders.confirm_received', order_id=order.id) }}" 
-                                           class="btn btn-success btn-sm rounded-pill">
-                                            <i class="bi bi-check2-circle me-1"></i>确认收货
-                                        </a>
+                                        <form method="POST" action="{{ url_for('orders.confirm_receive', order_id=order.id) }}" style="display:inline;">
+                                            <button type="submit" class="btn btn-success btn-sm rounded-pill w-100">
+                                                <i class="bi bi-check2-circle me-1"></i>确认收货
+                                            </button>
+                                        </form>
                                     {% endif %}
                                 {% endif %}
                                 
                                 <!-- 卖家操作 -->
                                 {% if order.seller_id == current_user.id %}
                                     {% if order.status == 'pending' %}
-                                        <a href="{{ url_for('orders.confirm_order', order_id=order.id) }}" 
-                                           class="btn btn-primary btn-sm rounded-pill">
-                                            <i class="bi bi-check2 me-1"></i>确认订单
-                                        </a>
+                                        <form method="POST" action="{{ url_for('orders.confirm', order_id=order.id) }}" style="display:inline;">
+                                            <button type="submit" class="btn btn-primary btn-sm rounded-pill w-100">
+                                                <i class="bi bi-check2 me-1"></i>确认订单
+                                            </button>
+                                        </form>
                                     {% elif order.status == 'paid' %}
-                                        <a href="{{ url_for('orders.ship_order', order_id=order.id) }}" 
-                                           class="btn btn-info btn-sm rounded-pill">
-                                            <i class="bi bi-truck me-1"></i>确认发货
-                                        </a>
+                                        <form method="POST" action="{{ url_for('orders.ship', order_id=order.id) }}" style="display:inline;">
+                                            <button type="submit" class="btn btn-info btn-sm rounded-pill w-100">
+                                                <i class="bi bi-truck me-1"></i>确认发货
+                                            </button>
+                                        </form>
                                     {% endif %}
                                 {% endif %}
                                 
