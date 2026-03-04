@@ -3,64 +3,99 @@
 {% block title %}我的书籍 - 校园二手书交易平台{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><i class="bi bi-book"></i> 我的书籍</h3>
-        <a href="{{ url_for('books.create') }}" class="btn btn-primary">发布新书</a>
+<div class="container py-3" style="max-width: 800px;">
+    <!-- 页面标题 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 fw-bold">我的书籍</h5>
+        <a href="{{ url_for('books.create') }}" class="btn btn-tiktok py-1 px-3" style="font-size: 13px;">
+            <i class="bi bi-plus-lg me-1"></i>发布
+        </a>
     </div>
     
-    <!-- 筛选 -->
-    <div class="mb-4">
-        <div class="btn-group" role="group">
-            <a href="{{ url_for('books.my_books', status='all') }}" 
-               class="btn btn-sm {{ 'btn-primary' if status == 'all' else 'btn-outline-primary' }}">全部</a>
-            <a href="{{ url_for('books.my_books', status='available') }}" 
-               class="btn btn-sm {{ 'btn-primary' if status == 'available' else 'btn-outline-primary' }}">在售</a>
-            <a href="{{ url_for('books.my_books', status='reserved') }}" 
-               class="btn btn-sm {{ 'btn-primary' if status == 'reserved' else 'btn-outline-primary' }}">已预订</a>
-            <a href="{{ url_for('books.my_books', status='sold') }}" 
-               class="btn btn-sm {{ 'btn-primary' if status == 'sold' else 'btn-outline-primary' }}">已售出</a>
-        </div>
+    <!-- 筛选标签 -->
+    <div class="d-flex flex-nowrap overflow-auto pb-3 mb-3" style="gap: 8px; scrollbar-width: none;">
+        <a href="{{ url_for('books.my_books', status='all') }}" 
+           class="category-pill {{ 'active' if status == 'all' else '' }}">
+            全部
+        </a>
+        <a href="{{ url_for('books.my_books', status='available') }}" 
+           class="category-pill {{ 'active' if status == 'available' else '' }}">
+            在售
+        </a>
+        <a href="{{ url_for('books.my_books', status='reserved') }}" 
+           class="category-pill {{ 'active' if status == 'reserved' else '' }}">
+            已预订
+        </a>
+        <a href="{{ url_for('books.my_books', status='sold') }}" 
+           class="category-pill {{ 'active' if status == 'sold' else '' }}">
+            已售出
+        </a>
     </div>
     
     <!-- 书籍列表 -->
     {% if books %}
-    <div class="row">
+    <div class="d-flex flex-column gap-3">
         {% for book in books %}
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h6 class="card-title text-truncate">{{ book.title }}</h6>
-                    <p class="card-text small text-muted">{{ book.author or '未知作者' }}</p>
-                    <p class="price-tag">¥{{ book.listing_price }}</p>
-                    <p>
-                        {% if book.status == 'available' %}
-                        <span class="badge bg-success">在售</span>
-                        {% elif book.status == 'reserved' %}
-                        <span class="badge bg-warning">已预订</span>
-                        {% elif book.status == 'sold' %}
-                        <span class="badge bg-secondary">已售出</span>
-                        {% else %}
-                        <span class="badge bg-secondary">已下架</span>
-                        {% endif %}
-                    </p>
-                </div>
-                <div class="card-footer bg-white border-top-0">
-                    <a href="{{ url_for('books.detail', book_id=book.id) }}" class="btn btn-sm btn-outline-primary">查看</a>
-                    {% if book.status == 'available' %}
-                    <a href="{{ url_for('books.edit', book_id=book.id) }}" class="btn btn-sm btn-outline-secondary">编辑</a>
-                    {% endif %}
+        <a href="{{ url_for('books.detail', book_id=book.id) }}" class="text-decoration-none">
+            <div class="card-tiktok">
+                <div class="card-body-tiktok">
+                    <div class="d-flex">
+                        <!-- 书籍图片 -->
+                        <div class="flex-shrink-0 me-3">
+                            {% if book.cover_image %}
+                            <img src="{{ url_for('books.uploaded_file', filename=book.cover_image) }}" 
+                                 alt="{{ book.title }}"
+                                 style="width: 60px; height: 80px; object-fit: cover; border-radius: 8px;">
+                            {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 80px; border-radius: 8px;">
+                                <i class="bi bi-book text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- 书籍详情 -->
+                        <div class="flex-grow-1 min-width-0">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="book-title" style="font-size: 14px;">{{ book.title }}</div>
+                                {% if book.status == 'available' %}
+                                <span class="badge-tiktok" style="background: #d1fae5; color: #065f46;">在售</span>
+                                {% elif book.status == 'reserved' %}
+                                <span class="badge-tiktok" style="background: #fef3c7; color: #92400e;">已预订</span>
+                                {% elif book.status == 'sold' %}
+                                <span class="badge-tiktok" style="background: #f3f4f6; color: #6b7280;">已售出</span>
+                                {% else %}
+                                <span class="badge-tiktok bg-secondary">已下架</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-muted" style="font-size: 12px;">{{ book.author or '未知作者' }}</div>
+                            <div class="d-flex justify-content-between align-items-center mt-1">
+                                <span class="price">¥{{ book.listing_price }}</span>
+                                <small class="text-muted">{{ book.created_at.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
         {% endfor %}
     </div>
     {% else %}
-    <div class="text-center py-5">
-        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
-        <p class="text-muted mt-2">暂无书籍</p>
-        <a href="{{ url_for('books.create') }}" class="btn btn-primary">发布第一本书</a>
+    <!-- 空状态 -->
+    <div class="empty-state">
+        <i class="bi bi-book"></i>
+        <h5 class="mt-3" style="color: #8a8b8c;">还没有书籍哦</h5>
+        <p class="text-muted">快来发布第一本吧！</p>
+        <a href="{{ url_for('books.create') }}" class="btn btn-tiktok">
+            <i class="bi bi-plus-lg me-1"></i>发布书籍
+        </a>
     </div>
     {% endif %}
 </div>
+
+<style>
+.min-width-0 {
+    min-width: 0;
+}
+</style>
 {% endblock %}
