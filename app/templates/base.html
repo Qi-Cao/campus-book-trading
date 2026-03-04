@@ -6,117 +6,406 @@
     <title>{% block title %}校园二手书交易平台{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2ecc71;
-            --secondary-color: #27ae60;
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --dark-color: #1f2937;
+            --light-bg: #f9fafb;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
+        
+        * {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            color: var(--dark-color);
         }
+        
+        /* 导航栏美化 */
         .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+            box-shadow: 0 2px 15px rgba(99, 102, 241, 0.3);
+            padding: 0.75rem 0;
         }
-        .navbar-brand, .nav-link {
-            color: white !important;
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.35rem;
+            letter-spacing: -0.5px;
         }
+        
+        .navbar-brand i {
+            margin-right: 8px;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* 按钮美化 */
         .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
         }
+        
         .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
         }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--secondary-color), #059669);
+            border: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+        }
+        
+        /* 卡片美化 */
         .card {
             border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            background: white;
+            overflow: hidden;
         }
+        
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
         }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        /* 书籍卡片 */
+        .book-card {
+            height: 100%;
+        }
+        
         .book-cover {
-            height: 200px;
+            height: 220px;
             object-fit: cover;
-            background-color: #e9ecef;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            border-radius: 12px 12px 0 0;
         }
-        .price-tag {
-            color: #e74c3c;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        .smart-price {
+        
+        .book-cover-placeholder {
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
             color: var(--primary-color);
+            font-size: 4rem;
+            border-radius: 12px 12px 0 0;
         }
+        
+        .book-info {
+            padding: 1rem;
+        }
+        
+        .book-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-author {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+        }
+        
+        .price-tag {
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .smart-price {
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        /* 标签美化 */
         .badge-condition {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 500;
         }
+        
+        .badge-new { background: #d1fae5; color: #065f46; }
+        .badge-like_new { background: #dbeafe; color: #1e40af; }
+        .badge-good { background: #fef3c7; color: #92400e; }
+        .badge-fair { background: #fed7aa; color: #9a3412; }
+        .badge-poor { background: #fecaca; color: #991b1b; }
+        
+        /* 表单美化 */
+        .form-control, .form-select {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 分类标签 */
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        /* Footer */
         footer {
             margin-top: auto;
-            background-color: #343a40;
-            color: white;
-            padding: 20px 0;
+            background: linear-gradient(135deg, var(--dark-color), #111827);
+            color: #d1d5db;
+            padding: 2rem 0;
         }
+        
+        footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            color: white;
+        }
+        
+        /* Flash 消息 */
         .flash-messages {
             position: fixed;
-            top: 70px;
+            top: 80px;
             right: 20px;
             z-index: 1050;
+            max-width: 350px;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.25rem;
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+        }
+        
+        /* 首页搜索框 */
+        .search-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 30px 30px;
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 0.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-box input {
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+        }
+        
+        .search-box input:focus {
+            box-shadow: none;
+        }
+        
+        .search-box .btn {
+            border-radius: 50px;
+            padding: 0.6rem 1.5rem;
+        }
+        
+        /* 下拉菜单 */
+        .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem;
+        }
+        
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            transition: all 0.2s;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        .animate-delay-1 { animation-delay: 0.1s; }
+        .animate-delay-2 { animation-delay: 0.2s; }
+        .animate-delay-3 { animation-delay: 0.3s; }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .search-section {
+                padding: 2rem 0;
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .card:hover {
+                transform: none;
+            }
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                <i class="bi bi-book"></i> 校园二手书
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}">
+                <i class="bi bi-book-half me-2"></i> 
+                <span>校园二手书</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.index') }}">首页</a>
+                        <a class="nav-link" href="{{ url_for('main.index') }}">
+                            <i class="bi bi-house-door me-1"></i> 首页
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('books.pricing_calculator') }}">智能定价</a>
+                        <a class="nav-link" href="{{ url_for('books.pricing_calculator') }}">
+                            <i class="bi bi-calculator me-1"></i> 智能定价
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.about') }}">关于</a>
+                        <a class="nav-link" href="{{ url_for('main.about') }}">
+                            <i class="bi bi-info-circle me-1"></i> 关于
+                        </a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('books.create') }}">
-                            <i class="bi bi-plus-circle"></i> 发布书籍
+                        <a class="nav-link btn btn-light text-primary ms-2 me-2" href="{{ url_for('books.create') }}">
+                            <i class="bi bi-plus-circle me-1"></i> 发布书籍
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i> {{ current_user.username }}
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('books.my_books') }}">我的书籍</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('orders.my_orders') }}">我的订单</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">个人资料</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('books.my_books') }}"><i class="bi bi-book me-2"></i>我的书籍</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('orders.my_orders') }}"><i class="bi bi-receipt me-2"></i>我的订单</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="bi bi-person me-2"></i>个人资料</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">退出</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i>退出</a></li>
                         </ul>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">登录</a>
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> 登录
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.register') }}">注册</a>
+                        <a class="nav-link btn btn-light text-primary ms-2" href="{{ url_for('auth.register') }}">
+                            注册
+                        </a>
                     </li>
                     {% endif %}
                 </ul>
@@ -130,6 +419,11 @@
             {% if messages %}
                 {% for category, message in messages %}
                 <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <i class="bi 
+                        {% if category == 'success' %}bi-check-circle-fill
+                        {% elif category == 'danger' %}bi-exclamation-circle-fill
+                        {% else %}bi-info-circle-fill{% endif %} 
+                        me-2"></i>
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -145,9 +439,17 @@
 
     <!-- 页脚 -->
     <footer>
-        <div class="container text-center">
-            <p class="mb-0">&copy; 2026 校园二手书交易平台 - 让书籍循环，让知识传递</p>
-            <small>基于 Flask + Bootstrap 开发</small>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <h5 class="mb-2">校园二手书交易平台</h5>
+                    <p class="mb-0 small">让书籍循环，让知识传递</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-1">&copy; 2026 Campus Book Trading</p>
+                    <small>基于 Flask + Bootstrap 开发</small>
+                </div>
+            </div>
         </div>
     </footer>
 

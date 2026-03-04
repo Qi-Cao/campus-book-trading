@@ -3,41 +3,59 @@
 {% block title %}首页 - 校园二手书交易平台{% endblock %}
 
 {% block content %}
-<div class="container my-4">
-    <!-- 搜索栏 -->
-    <div class="row mb-4">
-        <div class="col-md-8 mx-auto">
-            <form action="{{ url_for('main.search') }}" method="get" class="d-flex">
-                <input type="text" name="q" class="form-control me-2" placeholder="搜索书名、作者、ISBN..." value="{{ search }}">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-search"></i> 搜索
-                </button>
-            </form>
+<!-- 搜索区域 -->
+<div class="search-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mx-auto text-center">
+                <h1 class="text-white mb-4 fw-bold">
+                    <i class="bi bi-book-half me-2"></i>校园二手书交易平台
+                </h1>
+                <p class="text-white-50 mb-4">让闲置书籍找到新主人，让知识继续传递</p>
+                
+                <form action="{{ url_for('main.search') }}" method="get" class="search-box d-flex">
+                    <input type="text" name="q" class="form-control border-0" placeholder="搜索书名、作者、ISBN..." value="{{ search }}">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
+</div>
 
+<div class="container my-5">
     <!-- 统计信息 -->
-    <div class="row mb-4">
+    <div class="row mb-4 g-4">
         <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h2 class="text-primary">{{ stats.total_books }}</h2>
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <div class="stats-icon mb-2">
+                        <i class="bi bi-book text-primary" style="font-size: 2rem;"></i>
+                    </div>
+                    <h2 class="text-primary fw-bold">{{ stats.total_books }}</h2>
                     <p class="text-muted mb-0">在售书籍</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h2 class="text-success">{{ stats.total_users }}</h2>
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <div class="stats-icon mb-2">
+                        <i class="bi bi-people text-success" style="font-size: 2rem;"></i>
+                    </div>
+                    <h2 class="text-success fw-bold">{{ stats.total_users }}</h2>
                     <p class="text-muted mb-0">注册用户</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h2 class="text-info">{{ stats.total_orders }}</h2>
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <div class="stats-icon mb-2">
+                        <i class="bi bi-cart-check text-info" style="font-size: 2rem;"></i>
+                    </div>
+                    <h2 class="text-info fw-bold">{{ stats.total_orders }}</h2>
                     <p class="text-muted mb-0">已完成交易</p>
                 </div>
             </div>
@@ -47,14 +65,15 @@
     <!-- 分类导航 -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{{ url_for('main.index') }}" class="btn btn-sm {{ 'btn-primary' if not selected_category else 'btn-outline-primary' }}">
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <a href="{{ url_for('main.index') }}" 
+                   class="btn {{ 'btn-primary' if not selected_category else 'btn-outline-primary' }} rounded-pill px-4">
                     全部
                 </a>
                 {% for cat, count in categories %}
                 <a href="{{ url_for('main.category_books', category=cat) }}" 
-                   class="btn btn-sm {{ 'btn-primary' if selected_category == cat else 'btn-outline-primary' }}">
-                    {{ cat }} ({{ count }})
+                   class="btn {{ 'btn-primary' if selected_category == cat else 'btn-outline-primary' }} rounded-pill px-4">
+                    {{ cat }} <span class="opacity-75">({{ count }})</span>
                 </a>
                 {% endfor %}
             </div>
@@ -62,70 +81,88 @@
     </div>
 
     <!-- 书籍列表 -->
-    <div class="row">
+    <div class="row g-4">
         {% for book in books.items %}
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card h-100">
+        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6">
+            <div class="card book-card h-100">
                 {% if book.cover_image %}
-                <img src="{{ book.cover_image }}" class="card-img-top book-cover" alt="{{ book.title }}">
+                <img src="{{ url_for('books.uploaded_file', filename=book.cover_image) }}" 
+                     class="card-img-top book-cover" 
+                     alt="{{ book.title }}">
                 {% else %}
-                <div class="book-cover d-flex align-items-center justify-content-center">
-                    <i class="bi bi-book text-muted" style="font-size: 3rem;"></i>
+                <div class="book-cover-placeholder">
+                    <i class="bi bi-book"></i>
                 </div>
                 {% endif %}
-                <div class="card-body">
-                    <h6 class="card-title text-truncate">{{ book.title }}</h6>
-                    <p class="card-text small text-muted">{{ book.author or '未知作者' }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
+                <div class="book-info">
+                    <h6 class="book-title">{{ book.title }}</h6>
+                    <p class="book-author">{{ book.author or '未知作者' }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="price-tag">¥{{ book.listing_price }}</span>
                         {% if book.smart_price %}
-                        <span class="badge bg-success badge-condition">
-                            智能价: ¥{{ book.smart_price }}
+                        <span class="smart-price">
+                            <i class="bi bi-robot me-1"></i>建议¥{{ book.smart_price }}
                         </span>
                         {% endif %}
                     </div>
-                    <div class="mt-2">
-                        <span class="badge bg-secondary badge-condition">{{ book.get_condition_display() }}</span>
-                        <small class="text-muted float-end">{{ book.seller.username }}</small>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge badge-{{ book.condition }} badge-condition">
+                            {{ book.get_condition_display() }}
+                        </span>
+                        <small class="text-muted">
+                            <i class="bi bi-person me-1"></i>{{ book.seller.username }}
+                        </small>
                     </div>
                 </div>
-                <div class="card-footer bg-white border-top-0">
-                    <a href="{{ url_for('books.detail', book_id=book.id) }}" class="btn btn-sm btn-outline-primary w-100">
-                        查看详情
+                <div class="card-footer bg-white border-0 pt-0">
+                    <a href="{{ url_for('books.detail', book_id=book.id) }}" 
+                       class="btn btn-outline-primary btn-sm w-100 rounded-pill">
+                        <i class="bi bi-eye me-1"></i>查看详情
                     </a>
                 </div>
             </div>
         </div>
         {% else %}
         <div class="col-12 text-center py-5">
-            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
-            <p class="text-muted mt-2">暂无在售书籍</p>
-            <a href="{{ url_for('books.create') }}" class="btn btn-primary">发布第一本书</a>
+            <div class="py-5">
+                <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">暂无在售书籍</h4>
+                <p class="text-muted">快来发布第一本书吧！</p>
+                <a href="{{ url_for('books.create') }}" class="btn btn-primary rounded-pill px-4">
+                    <i class="bi bi-plus-circle me-2"></i>发布书籍
+                </a>
+            </div>
         </div>
         {% endfor %}
     </div>
 
     <!-- 分页 -->
     {% if books.pages > 1 %}
-    <nav class="mt-4">
+    <nav class="mt-5">
         <ul class="pagination justify-content-center">
             {% if books.has_prev %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('main.index', page=books.prev_num, search=search, category=selected_category) }}">上一页</a>
+                <a class="page-link rounded-pill me-2" href="{{ url_for('main.index', page=books.prev_num, search=search, category=selected_category) }}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
             </li>
             {% endif %}
             
             {% for p in range(1, books.pages + 1) %}
                 {% if p >= books.page - 2 and p <= books.page + 2 %}
                 <li class="page-item {{ 'active' if p == books.page else '' }}">
-                    <a class="page-link" href="{{ url_for('main.index', page=p, search=search, category=selected_category) }}">{{ p }}</a>
+                    <a class="page-link rounded-pill me-1" href="{{ url_for('main.index', page=p, search=search, category=selected_category) }}">{{ p }}</a>
                 </li>
                 {% endif %}
             {% endfor %}
             
             {% if books.has_next %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('main.index', page=books.next_num, search=search, category=selected_category) }}">下一页</a>
+                <a class="page-link rounded-pill ms-2" href="{{ url_for('main.index', page=books.next_num, search=search, category=selected_category) }}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
             </li>
             {% endif %}
         </ul>
