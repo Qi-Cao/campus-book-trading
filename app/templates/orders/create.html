@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}确认订单 - 校园二手书交易平台{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-cart-check me-2"></i>确认订单</h4>
+                </div>
+                <div class="card-body">
+                    <!-- 书籍信息 -->
+                    <div class="d-flex mb-4">
+                        {% if book.cover_image %}
+                        <img src="{{ url_for('books.uploaded_file', filename=book.cover_image) }}" 
+                             alt="{{ book.title }}"
+                             style="width: 100px; height: 130px; object-fit: cover;"
+                             class="rounded me-3">
+                        {% else %}
+                        <div class="bg-light rounded d-flex align-items-center justify-content-center me-3" 
+                             style="width: 100px; height: 130px;">
+                            <i class="bi bi-book text-muted" style="font-size: 2rem;"></i>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h5>{{ book.title }}</h5>
+                            <p class="text-muted mb-1">{{ book.author or '未知作者' }}</p>
+                            <p class="text-muted mb-0">卖家: {{ book.seller.username }}</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- 订单信息 -->
+                    <form method="POST" action="{{ url_for('orders.create', book_id=book.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">成交价格</label>
+                            <div class="input-group">
+                                <span class="input-group-text">¥</span>
+                                <input type="number" name="price" class="form-control" 
+                                       value="{{ book.listing_price }}" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">联系方式（手机号）</label>
+                            <input type="text" name="contact_info" class="form-control" 
+                                   placeholder="请输入您的手机号" required>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            确认后，卖家将收到订单通知，请保持手机畅通
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill">
+                                <i class="bi bi-check-circle me-2"></i>确认下单
+                            </button>
+                            <a href="{{ url_for('books.detail', book_id=book.id) }}" 
+                               class="btn btn-outline-secondary rounded-pill">
+                                取消
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

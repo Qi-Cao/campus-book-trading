@@ -18,7 +18,7 @@ def generate_order_no():
     return f'ORD{timestamp}{random_str}'
 
 
-@orders_bp.route('/create/<int:book_id>', methods=['POST'])
+@orders_bp.route('/create/<int:book_id>', methods=['GET', 'POST'])
 @login_required
 def create(book_id):
     """创建订单"""
@@ -33,7 +33,11 @@ def create(book_id):
         flash('不能购买自己的书籍', 'danger')
         return redirect(url_for('books.detail', book_id=book_id))
     
-    # 创建订单
+    # GET 请求显示确认页面
+    if request.method == 'GET':
+        return render_template('orders/create.html', book=book)
+    
+    # POST 请求创建订单
     order = Order(
         order_no=generate_order_no(),
         book_id=book_id,
