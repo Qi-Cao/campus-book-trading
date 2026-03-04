@@ -119,11 +119,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">原价（元）</label>
-                                <input type="number" name="original_price" class="form-control" step="0.01" min="0">
+                                <input type="number" name="original_price" class="form-control" id="inputOriginalPrice" step="0.01" min="0">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">挂牌价格 <span class="text-danger">*</span></label>
-                                <input type="number" name="listing_price" class="form-control" step="0.01" min="0" required>
+                                <input type="number" name="listing_price" class="form-control" id="inputListingPrice" step="0.01" min="0" required>
                             </div>
                         </div>
                         
@@ -314,6 +314,9 @@ async function analyzeBookImages() {
                 document.getElementById('aiCondition').textContent = result.condition;
                 document.getElementById('conditionSelect').value = conditionValue;
                 document.getElementById('aiConditionInput').value = conditionValue;
+                
+                // 自动计算智能定价
+                await calculateSmartPrice(conditionValue);
             }
             if (result.condition_reason) {
                 document.getElementById('aiConditionReason').textContent = '（' + result.condition_reason + '）';
@@ -332,6 +335,66 @@ async function analyzeBookImages() {
         document.getElementById('aiError').style.display = 'block';
         document.getElementById('aiErrorMsg').textContent = '发生错误：' + error.message;
     }
+}
+
+// 自动计算智能定价
+async function calculateSmartPrice(condition) {
+    try {
+        const originalPrice = document.getElementById('inputOriginalPrice')?.value || null;
+        const isbn = document.getElementById('inputIsbn')?.value || null;
+        const category = document.querySelector('select[name="category"]')?.value || '其他';
+        const edition = document.querySelector('select[name="edition"]')?.value || 'recent';
+        
+        const response = await fetch('/books/api/calculate-price', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                original_price: originalPrice ? parseFloat(originalPrice) : null,
+                condition: condition,
+                edition: edition,
+                category: category,
+                isbn: isbn
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            // 自动填入智能定价建议
+            document.getElementById('inputListingPrice').value = result.data.smart_price;
+            
+            // 显示定价详情
+            showPricingInfo(result.data);
+        }
+    } catch (error) {
+        console.error('定价计算失败:', error);
+    }
+}
+
+// 显示定价信息
+function showPricingInfo(data) {
+    // 创建定价提示
+    let pricingTip = document.getElementById('pricingTip');
+    if (!pricingTip) {
+        pricingTip = document.createElement('div');
+        pricingTip.id = 'pricingTip';
+        pricingTip.className = 'alert alert-info mt-2';
+        pricingTip.style.display = 'none';
+        const listingPriceInput = document.getElementById('inputListingPrice');
+        if (listingPriceInput) {
+            listingPriceInput.parentElement.appendChild(pricingTip);
+        }
+    }
+    
+    pricingTip.innerHTML = `
+        <strong>💡 智能定价建议：</strong>
+        基础价 ${data.base_price}元 × 新旧${data.condition_score} × 版本${data.edition_score} × 供需${data.demand_score}
+        = <strong>${data.smart_price}元</strong>
+        <br><small>建议价格区间: ${data.min_price} - ${data.max_price} 元</small>
+    `;
+    pricingTip.style.display = 'block';
 }
 </script>
 {% endblock %}
