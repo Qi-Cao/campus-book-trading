@@ -253,13 +253,18 @@ def review(order_id):
 @login_required
 def my_orders():
     """我的订单"""
-    role = request.args.get('role', 'buyer')  # buyer or seller
+    role = request.args.get('role', 'buyer')  # buyer, seller, or all
     status = request.args.get('status', 'all')
     
     if role == 'buyer':
         query = Order.query.filter(Order.buyer_id == current_user.id)
-    else:
+    elif role == 'seller':
         query = Order.query.filter(Order.seller_id == current_user.id)
+    else:  # all - 显示买家和卖家的所有订单
+        query = Order.query.filter(
+            (Order.buyer_id == current_user.id) | 
+            (Order.seller_id == current_user.id)
+        )
     
     if status != 'all':
         query = query.filter(Order.status == status)
