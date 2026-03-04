@@ -2,9 +2,11 @@ from flask import Flask
 from config import Config
 from app.models.models import db, User
 from flask_login import LoginManager
+from flask_migrate import Migrate
 import os
 
 login_manager = LoginManager()
+migrate = Migrate()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -17,6 +19,9 @@ def create_app(config_class=Config):
     
     # 初始化数据库
     db.init_app(app)
+    
+    # 初始化迁移
+    migrate.init_app(app, db)
     
     # 初始化登录管理器
     login_manager.init_app(app)
@@ -35,9 +40,5 @@ def create_app(config_class=Config):
     app.register_blueprint(orders_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix='/api')
-    
-    # 创建数据库表
-    with app.app_context():
-        db.create_all()
     
     return app
