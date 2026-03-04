@@ -132,19 +132,27 @@ def analyze_images():
 def create():
     """发布书籍"""
     if request.method == 'POST':
-        # 获取表单数据
+        # 获取表单数据（全部设为可选）
         title = request.form.get('title')
-        author = request.form.get('author')
-        isbn = request.form.get('isbn')
-        edition = request.form.get('edition')
-        publisher = request.form.get('publisher')
-        publish_year = request.form.get('publish_year', type=int)
-        original_price = request.form.get('original_price', type=float)
+        author = request.form.get('author') or None
+        isbn = request.form.get('isbn') or None
+        edition = request.form.get('edition') or 'recent'
+        publisher = request.form.get('publisher') or None
+        
+        # 处理可能为空的数字字段
+        publish_year_str = request.form.get('publish_year')
+        publish_year = int(publish_year_str) if publish_year_str else None
+        
+        original_price_str = request.form.get('original_price')
+        original_price = float(original_price_str) if original_price_str else None
+        
         condition = request.form.get('condition')  # 用户选择的新旧程度
         ai_condition = request.form.get('ai_condition')  # AI识别的新旧程度
-        category = request.form.get('category')
-        description = request.form.get('description')
-        listing_price = request.form.get('listing_price', type=float)
+        category = request.form.get('category') or '其他'
+        description = request.form.get('description') or None
+        
+        listing_price_str = request.form.get('listing_price')
+        listing_price = float(listing_price_str) if listing_price_str else None
         
         # 处理图片上传
         cover_image = None
