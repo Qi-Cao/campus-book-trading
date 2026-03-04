@@ -302,6 +302,10 @@ async function analyzeBookImages() {
                 document.getElementById('inputPublisher').value = result.publisher;
                 document.getElementById('aiPublisherInput').value = result.publisher;
             }
+            if (result.original_price) {
+                // 自动填入识别到的原价
+                document.getElementById('inputOriginalPrice').value = result.original_price;
+            }
             if (result.condition) {
                 const conditionMap = {
                     '全新': 'new',

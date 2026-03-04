@@ -46,6 +46,7 @@ class BookAIAnalyzer:
                 'success': False,
                 'error': 'dashscope not installed',
                 'book_name': None,
+                'original_price': None,
                 'author': None,
                 'isbn': None,
                 'publisher': None,
@@ -65,6 +66,7 @@ class BookAIAnalyzer:
                 'success': False,
                 'error': 'No image provided',
                 'book_name': None,
+                'original_price': None,
                 'author': None,
                 'isbn': None,
                 'publisher': None,
@@ -72,9 +74,9 @@ class BookAIAnalyzer:
                 'condition_reason': None
             }
         
-        # 构建Prompt - 包含出版社识别
+        # 构建Prompt - 包含出版社和原价识别
         prompt = """请分析这张二手书籍照片，要求：
-1. 识别图中文字，提取书名、作者、ISBN、出版社（如有）
+1. 识别图中文字，提取书名、作者、ISBN、出版社、书籍原价（如有）
 2. 根据书籍封面磨损程度、页面笔记、折痕等情况，评估这本书的新旧程度
 
 请按以下JSON格式输出：
@@ -83,6 +85,7 @@ class BookAIAnalyzer:
     "author": "作者（如有）", 
     "isbn": "ISBN（如有）",
     "publisher": "出版社（如有）",
+    "original_price": 原价（如有，如 49.00 或 49元），只返回数字，如果没有返回 null,
     "condition": "全新/几乎全新/较好/一般/较差",
     "condition_reason": "评估依据简要说明"
 }
@@ -118,6 +121,7 @@ class BookAIAnalyzer:
                     'success': False,
                     'error': f"API error: {response.code} - {response.message}",
                     'book_name': None,
+                    'original_price': None,
                     'author': None,
                     'isbn': None,
                     'publisher': None,
@@ -130,6 +134,7 @@ class BookAIAnalyzer:
                 'success': False,
                 'error': str(e),
                 'book_name': None,
+                'original_price': None,
                 'author': None,
                 'isbn': None,
                 'publisher': None,
@@ -154,6 +159,7 @@ class BookAIAnalyzer:
                 'success': False,
                 'error': 'dashscope not installed',
                 'book_name': None,
+                'original_price': None,
                 'author': None,
                 'isbn': None,
                 'publisher': None,
@@ -180,6 +186,7 @@ class BookAIAnalyzer:
                 'success': False,
                 'error': 'No images provided',
                 'book_name': None,
+                'original_price': None,
                 'author': None,
                 'isbn': None,
                 'publisher': None,
@@ -188,9 +195,9 @@ class BookAIAnalyzer:
                 'images_analyzed': 0
             }
         
-        # 构建Prompt - 批量分析
+        # 构建Prompt - 包含出版社和原价识别
         prompt = """请分析这些二手书籍照片（多张图片），要求：
-1. 综合所有图片中的文字信息，提取书名、作者、ISBN、出版社
+1. 综合所有图片中的文字信息，提取书名、作者、ISBN、出版社、书籍原价（如有）
 2. 根据书籍封面磨损程度、页面笔记、折痕等情况，评估这本书的新旧程度
 3. 如果某些信息在某张图片上找不到，可能在另一张图片上，仔细对比所有图片
 
@@ -200,6 +207,7 @@ class BookAIAnalyzer:
     "author": "作者（综合判断）", 
     "isbn": "ISBN（综合判断）",
     "publisher": "出版社（综合判断）",
+    "original_price": 原价（如有，如 49.00 或 49元），只返回数字，如果没有返回 null,
     "condition": "全新/几乎全新/较好/一般/较差",
     "condition_reason": "评估依据简要说明"
 }
@@ -232,6 +240,7 @@ class BookAIAnalyzer:
                     'success': False,
                     'error': f"API error: {response.code} - {response.message}",
                     'book_name': None,
+                    'original_price': None,
                     'author': None,
                     'isbn': None,
                     'publisher': None,
@@ -245,6 +254,7 @@ class BookAIAnalyzer:
                 'success': False,
                 'error': str(e),
                 'book_name': None,
+                'original_price': None,
                 'author': None,
                 'isbn': None,
                 'publisher': None,
@@ -261,6 +271,7 @@ class BookAIAnalyzer:
             return {
                 'success': True,
                 'book_name': data.get('book_name'),
+            'original_price': data.get('original_price'),
                 'author': data.get('author'),
                 'isbn': data.get('isbn'),
                 'publisher': data.get('publisher'),
@@ -277,6 +288,7 @@ class BookAIAnalyzer:
                     return {
                         'success': True,
                         'book_name': data.get('book_name'),
+            'original_price': data.get('original_price'),
                         'author': data.get('author'),
                         'isbn': data.get('isbn'),
                         'publisher': data.get('publisher'),
@@ -291,6 +303,7 @@ class BookAIAnalyzer:
                 'success': True,
                 'raw_text': text,
                 'book_name': None,
+                'original_price': None,
                 'author': None,
                 'isbn': None,
                 'publisher': None,
