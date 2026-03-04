@@ -208,7 +208,6 @@ def create():
             listing_price=listing_price,
             smart_price=pricing_result['smart_price'],
             cover_image=cover_image,
-            cover_images=cover_images_json,
             ai_condition=ai_condition,
             ai_analyzed=True if ai_condition else False,
             seller_id=current_user.id,
