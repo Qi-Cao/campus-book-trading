@@ -52,7 +52,8 @@ class Book(db.Model):
     # 书籍状况
     condition = db.Column(db.String(20), nullable=False)  # new, like_new, good, fair, poor
     description = db.Column(db.Text)
-    cover_image = db.Column(db.String(255))  # 封面图片路径
+    cover_image = db.Column(db.String(255))  # 封面图片路径（第一张）
+    cover_images = db.Column(db.Text)  # 所有图片，JSON格式存储
     
     # AI识别结果（百炼大模型）
     ai_condition = db.Column(db.String(20))  # AI评估的新旧程度
@@ -110,6 +111,21 @@ class Book(db.Model):
             'old': '旧版'
         }
         return edition_map.get(self.edition, self.edition)
+    
+    def get_all_images(self):
+        """获取所有图片列表"""
+        import json
+        if not self.cover_images:
+            # 如果没有多图数据，但有封面图，返回封面图
+            return [self.cover_image] if self.cover_image else []
+        try:
+            images = json.loads(self.cover_images)
+            # 确保封面图在第一位
+            if self.cover_image and self.cover_image not in images:
+                images.insert(0, self.cover_image)
+            return images
+        except:
+            return [self.cover_image] if self.cover_image else []
 
 class Order(db.Model):
     """订单模型"""

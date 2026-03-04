@@ -6,40 +6,60 @@
 <div class="container my-5">
     <div class="row">
         <!-- 书籍图片 -->
-        <div class="col-md-4">
-            <div class="card">
+        <div class="col-md-5">
+            <!-- 主图 -->
+            <div class="card mb-3">
                 {% if book.cover_image %}
-                <img src="{{ book.cover_image }}" class="card-img-top" alt="{{ book.title }}">
+                <img src="{{ url_for('books.uploaded_file', filename=book.cover_image) }}" 
+                     class="card-img-top" 
+                     alt="{{ book.title }}"
+                     id="mainImage"
+                     style="max-height: 450px; object-fit: contain;">
                 {% else %}
-                <div class="book-cover d-flex align-items-center justify-content-center" style="height: 400px;">
+                <div class="book-cover-placeholder d-flex align-items-center justify-content-center" style="height: 450px;">
                     <i class="bi bi-book text-muted" style="font-size: 6rem;"></i>
                 </div>
                 {% endif %}
             </div>
+            
+            <!-- 缩略图列表 -->
+            {% set images = book.get_all_images() %}
+            {% if images|length > 1 %}
+            <div class="d-flex flex-wrap gap-2">
+                {% for img in images %}
+                <img src="{{ url_for('books.uploaded_file', filename=img) }}" 
+                     class="img-thumbnail"
+                     style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; {{ 'border-primary' if loop.first else '' }}"
+                     onclick="changeImage(this, '{{ url_for('books.uploaded_file', filename=img) }}')">
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
         
         <!-- 书籍信息 -->
-        <div class="col-md-8">
-            <h2>{{ book.title }}</h2>
-            <p class="text-muted">作者：{{ book.author or '未知' }}</p>
+        <div class="col-md-7">
+            <h2 class="mb-2">{{ book.title }}</h2>
+            <p class="text-muted mb-4">
+                <i class="bi bi-person me-1"></i>作者：{{ book.author or '未知' }}
+            </p>
             
             <div class="row mb-3">
                 <div class="col-md-6">
                     <table class="table table-borderless">
                         <tr>
-                            <td><strong>ISBN：</strong></td>
+                            <td><strong><i class="bi bi-upc me-1 text-muted"></i>ISBN：</strong></td>
                             <td>{{ book.isbn or '-' }}</td>
                         </tr>
                         <tr>
-                            <td><strong>版本：</strong></td>
+                            <td><strong><i class="bi bi-journal-bookmark me-1 text-muted"></i>版本：</strong></td>
                             <td>{{ book.get_edition_display() }}</td>
                         </tr>
                         <tr>
-                            <td><strong>出版社：</strong></td>
+                            <td><strong><i class="bi bi-building me-1 text-muted"></i>出版社：</strong></td>
                             <td>{{ book.publisher or '-' }}</td>
                         </tr>
                         <tr>
-                            <td><strong>出版年份：</strong></td>
+                            <td><strong><i class="bi bi-calendar me-1 text-muted"></i>出版年份：</strong></td>
                             <td>{{ book.publish_year or '-' }}</td>
                         </tr>
                     </table>
@@ -47,19 +67,19 @@
                 <div class="col-md-6">
                     <table class="table table-borderless">
                         <tr>
-                            <td><strong>原价：</strong></td>
+                            <td><strong><i class="bi bi-currency-dollar me-1 text-muted"></i>原价：</strong></td>
                             <td>{{ '¥%.2f'|format(book.original_price) if book.original_price else '-' }}</td>
                         </tr>
                         <tr>
-                            <td><strong>新旧程度：</strong></td>
-                            <td><span class="badge bg-primary">{{ book.get_condition_display() }}</span></td>
+                            <td><strong><i class="bi bi-heart me-1 text-muted"></i>新旧程度：</strong></td>
+                            <td><span class="badge badge-{{ book.condition }} badge-condition">{{ book.get_condition_display() }}</span></td>
                         </tr>
                         <tr>
-                            <td><strong>分类：</strong></td>
-                            <td>{{ book.category }}</td>
+                            <td><strong><i class="bi bi-tag me-1 text-muted"></i>分类：</strong></td>
+                            <td><span class="category-tag">{{ book.category }}</span></td>
                         </tr>
                         <tr>
-                            <td><strong>浏览量：</strong></td>
+                            <td><strong><i class="bi bi-eye me-1 text-muted"></i>浏览量：</strong></td>
                             <td>{{ book.view_count }}</td>
                         </tr>
                     </table>
@@ -67,24 +87,24 @@
             </div>
             
             <!-- 价格区域 -->
-            <div class="card bg-light mb-3">
+            <div class="card bg-light mb-3 border-0">
                 <div class="card-body">
                     <div class="row text-center">
                         <div class="col-md-4">
                             <h6 class="text-muted">挂牌价</h6>
-                            <h3 class="text-danger">¥{{ book.listing_price }}</h3>
+                            <h3 class="text-danger fw-bold">¥{{ book.listing_price }}</h3>
                         </div>
                         <div class="col-md-4">
                             <h6 class="text-muted">智能定价</h6>
-                            <h3 class="text-success">¥{{ book.smart_price or '-' }}</h3>
+                            <h3 class="text-success fw-bold">¥{{ book.smart_price or '-' }}</h3>
                         </div>
                         <div class="col-md-4">
                             <h6 class="text-muted">节省</h6>
-                            <h3 class="text-info">
-                                {% if book.original_price %}
-                                {{ '%.0f'|format((1 - book.listing_price/book.original_price)*100) }}%
+                            <h3 class="text-info fw-bold">
+                                {% if book.original_price and book.listing_price %}
+                                    ¥{{ '%.0f'|format(book.original_price - book.listing_price) }}
                                 {% else %}
-                                -
+                                    -
                                 {% endif %}
                             </h3>
                         </div>
@@ -95,100 +115,94 @@
             <!-- 描述 -->
             {% if book.description %}
             <div class="mb-3">
-                <h5>书籍描述</h5>
-                <p>{{ book.description }}</p>
+                <h6><i class="bi bi-card-text me-1"></i>书籍描述</h6>
+                <p class="text-muted">{{ book.description }}</p>
             </div>
             {% endif %}
             
             <!-- 卖家信息 -->
-            <div class="card mb-3">
+            <div class="card mb-3 border-0 bg-light">
                 <div class="card-body">
-                    <h5><i class="bi bi-person"></i> 卖家信息</h5>
-                    <p>
-                        <strong>{{ book.seller.username }}</strong>
-                        <span class="badge bg-warning text-dark">信用分: {{ book.seller.credit_score }}</span>
-                    </p>
-                    <p class="text-muted small">在售书籍: {{ book.seller.books.count() }} | 已售: {{ book.seller.books.filter_by(status='sold').count() }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">卖家</small>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-circle text-primary me-2" style="font-size: 1.5rem;"></i>
+                                <span class="fw-bold">{{ book.seller.username }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <small class="text-muted">信用分</small>
+                            <div>
+                                <span class="badge bg-success">{{ book.seller.credit_score }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- 操作按钮 -->
-            {% if current_user.is_authenticated and current_user.id != book.seller_id and book.status == 'available' %}
-            <div class="d-flex gap-2">
-                <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#buyModal">
-                    <i class="bi bi-cart-plus"></i> 立即购买
-                </button>
-                <a href="{{ url_for('books.want', book_id=book.id) }}" class="btn btn-outline-primary btn-lg">
-                    <i class="bi bi-heart"></i> 想要
-                </a>
-            </div>
-            {% elif book.status != 'available' %}
-            <div class="alert alert-warning">
-                <i class="bi bi-exclamation-circle"></i> 该书籍当前{{ '已售出' if book.status == 'sold' else '已下架' }}
-            </div>
-            {% endif %}
-            
-            {% if current_user.is_authenticated and current_user.id == book.seller_id %}
-            <div class="d-flex gap-2">
-                <a href="{{ url_for('books.edit', book_id=book.id) }}" class="btn btn-primary">
-                    <i class="bi bi-pencil"></i> 编辑
-                </a>
-                <form method="POST" action="{{ url_for('books.delete', book_id=book.id) }}" onsubmit="return confirm('确定要下架这本书吗？')">
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash"></i> 下架
+            <div class="d-grid gap-2">
+                {% if current_user.is_authenticated and current_user.id != book.seller_id %}
+                    <a href="{{ url_for('orders.create', book_id=book.id) }}" class="btn btn-primary btn-lg rounded-pill">
+                        <i class="bi bi-cart-plus me-2"></i>立即购买
+                    </a>
+                    <button class="btn btn-outline-primary rounded-pill" onclick="addToWant()">
+                        <i class="bi bi-heart me-2"></i>想要
                     </button>
-                </form>
+                {% elif not current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg rounded-pill">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>登录后购买
+                    </a>
+                {% endif %}
+                
+                {% if current_user.is_authenticated and current_user.id == book.seller_id %}
+                    <a href="{{ url_for('books.edit', book_id=book.id) }}" class="btn btn-outline-primary rounded-pill">
+                        <i class="bi bi-pencil me-2"></i>编辑
+                    </a>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
     </div>
     
-    <!-- 相似推荐 -->
-    {% if similar_books %}
-    <div class="mt-5">
-        <h4>相似书籍推荐</h4>
-        <div class="row">
-            {% for sb in similar_books %}
-            <div class="col-md-3 col-sm-6 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="card-title text-truncate">{{ sb.title }}</h6>
-                        <p class="price-tag">¥{{ sb.listing_price }}</p>
-                        <a href="{{ url_for('books.detail', book_id=sb.id) }}" class="btn btn-sm btn-outline-primary">查看</a>
+    <!-- 评价区域 -->
+    {% if book.reviews.count() > 0 %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="bi bi-chat-dots me-2"></i>评价 ({{ book.reviews.count() }})</h4>
+            {% for review in book.reviews.all() %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ review.reviewer.username }}</strong>
+                            <span class="text-muted">评价：{{ review.rating }} 星</span>
+                        </div>
+                        <small class="text-muted">{{ review.created_at.strftime('%Y-%m-%d') }}</small>
                     </div>
+                    <p class="mb-0 mt-2">{{ review.comment }}</p>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
     {% endif %}
-    
-    <!-- 购买弹窗 -->
-    {% if current_user.is_authenticated and current_user.id != book.seller_id %}
-    <div class="modal fade" id="buyModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">确认购买</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form method="POST" action="{{ url_for('orders.create', book_id=book.id) }}">
-                    <div class="modal-body">
-                        <p>您即将购买：<strong>{{ book.title }}</strong></p>
-                        <p>价格：<strong class="text-danger">¥{{ book.listing_price }}</strong></p>
-                        <div class="mb-3">
-                            <label class="form-label">您的联系方式</label>
-                            <input type="text" name="contact_info" class="form-control" placeholder="手机号或微信" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-success">确认购买</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 </div>
+
+<script>
+function changeImage(thumbnail, newSrc) {
+    // 切换主图
+    document.getElementById('mainImage').src = newSrc;
+    
+    // 更新边框样式
+    document.querySelectorAll('.img-thumbnail').forEach(img => {
+        img.classList.remove('border-primary');
+    });
+    thumbnail.classList.add('border-primary');
+}
+
+function addToWant() {
+    window.location.href = '{{ url_for("books.want", book_id=book.id) }}';
+}
+</script>
 {% endblock %}
