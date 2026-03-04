@@ -52,7 +52,8 @@ class Book(db.Model):
     # 书籍状况
     condition = db.Column(db.String(20), nullable=False)  # new, like_new, good, fair, poor
     description = db.Column(db.Text)
-    cover_image = db.Column(db.String(255))  # 封面图片路径
+    cover_image = db.Column(db.String(255))  # 封面图片路径（单张）
+    cover_images = db.Column(db.Text)  # 多张图片，JSON格式存储
     
     # AI识别结果（百炼大模型）
     ai_condition = db.Column(db.String(20))  # AI评估的新旧程度

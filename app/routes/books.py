@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from app.models.models import db, Book, User
 from app.utils.smart_pricing import calculate_smart_price, SmartPricing
-from app.utils.dashscope_helper import analyze_book_image
+from app.utils.dashscope_helper import analyze_book_image, analyze_multiple_images
 from config import Config
 from werkzeug.utils import secure_filename
 import os
@@ -97,6 +97,36 @@ def analyze_image():
         return jsonify({'success': False, 'error': str(e)})
 
 
+@books_bp.route('/analyze-images', methods=['POST'])
+@login_required
+def analyze_images():
+    """AI批量分析多张书籍图片（OCR + 新旧程度评估）"""
+    # 获取图片文件名列表
+    filenames = request.json.get('filenames', [])
+    
+    if not filenames:
+        return jsonify({'success': False, 'error': 'No images provided'})
+    
+    try:
+        # 准备图片路径
+        upload_folder = os.path.join(current_app.root_path, '..', Config.UPLOAD_FOLDER)
+        image_paths = []
+        for filename in filenames:
+            filepath = os.path.join(upload_folder, filename)
+            if os.path.exists(filepath):
+                image_paths.append(filepath)
+        
+        if not image_paths:
+            return jsonify({'success': False, 'error': 'No valid images found'})
+        
+        # 批量分析
+        result = analyze_multiple_images(image_paths=image_paths)
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
 @books_bp.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
@@ -118,9 +148,22 @@ def create():
         
         # 处理图片上传
         cover_image = None
-        if 'cover_image' in request.files:
-            file = request.files['cover_image']
-            cover_image = save_uploaded_file(file)
+        cover_images_list = []
+        
+        # 处理多图片上传
+        if 'cover_images' in request.files:
+            files = request.files.getlist('cover_images')
+            for file in files:
+                if file.filename:
+                    filename = save_uploaded_file(file)
+                    if filename:
+                        cover_images_list.append(filename)
+                        if not cover_image:
+                            cover_image = filename  # 第一张作为封面
+        
+        # 处理多图片JSON
+        import json
+        cover_images_json = json.dumps(cover_images_list) if cover_images_list else None
         
         if not title or not listing_price:
             flash('请填写书籍名称和价格', 'danger')
@@ -157,6 +200,7 @@ def create():
             listing_price=listing_price,
             smart_price=pricing_result['smart_price'],
             cover_image=cover_image,
+            cover_images=cover_images_json,
             ai_condition=ai_condition,
             ai_analyzed=True if ai_condition else False,
             seller_id=current_user.id,
