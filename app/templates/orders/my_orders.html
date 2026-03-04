@@ -12,62 +12,42 @@
         <span class="badge bg-primary fs-6">共 {{ orders|length }} 条</span>
     </div>
     
-    <!-- 筛选器 -->
+    <!-- 筛选器 - 下拉框形式 -->
     <div class="card mb-4">
         <div class="card-body">
-            <div class="row g-3 align-items-center">
+            <form method="get" action="{{ url_for('orders.my_orders') }}" class="row g-3 align-items-center">
                 <!-- 角色筛选 -->
-                <div class="col-auto">
-                    <label class="form-label mb-0 fw-bold">角色:</label>
-                </div>
-                <div class="col-auto">
-                    <div class="btn-group" role="group">
-                        <a href="{{ url_for('orders.my_orders', role='buyer', status=status) }}" 
-                           class="btn btn-sm {{ 'btn-primary' if role == 'buyer' else 'btn-outline-primary' }} rounded-pill">
-                            <i class="bi bi-cart me-1"></i>我买的
-                        </a>
-                        <a href="{{ url_for('orders.my_orders', role='seller', status=status) }}" 
-                           class="btn btn-sm {{ 'btn-primary' if role == 'seller' else 'btn-outline-primary' }} rounded-pill">
-                            <i class="bi bi-shop me-1"></i>我卖的
-                        </a>
-                        <a href="{{ url_for('orders.my_orders', role='all', status=status) }}" 
-                           class="btn btn-sm {{ 'btn-primary' if role == 'all' else 'btn-outline-primary' }} rounded-pill">
-                            <i class="bi bi-list-ul me-1"></i>全部
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="col-auto">
-                    <div class="vr"></div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">角色筛选</label>
+                    <select name="role" class="form-select" onchange="this.form.submit()">
+                        <option value="all" {{ 'selected' if role == 'all' }}>全部</option>
+                        <option value="buyer" {{ 'selected' if role == 'buyer' }}>我买的</option>
+                        <option value="seller" {{ 'selected' if role == 'seller' }}>我卖的</option>
+                    </select>
                 </div>
                 
                 <!-- 状态筛选 -->
-                <div class="col-auto">
-                    <label class="form-label mb-0 fw-bold">状态:</label>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">状态筛选</label>
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="all" {{ 'selected' if status == 'all' }}>全部状态</option>
+                        <option value="pending" {{ 'selected' if status == 'pending' }}>待确认</option>
+                        <option value="confirmed" {{ 'selected' if status == 'confirmed' }}>已确认</option>
+                        <option value="paid" {{ 'selected' if status == 'paid' }}>已付款/待发货</option>
+                        <option value="shipped" {{ 'selected' if status == 'shipped' }}>已发货/待收货</option>
+                        <option value="completed" {{ 'selected' if status == 'completed' }}>已完成</option>
+                        <option value="cancelled" {{ 'selected' if status == 'cancelled' }}>已取消</option>
+                    </select>
                 </div>
-                <div class="col-auto">
-                    <div class="btn-group" role="group">
-                        <a href="{{ url_for('orders.my_orders', role=role, status='all') }}" 
-                           class="btn btn-sm {{ 'btn-success' if status == 'all' else 'btn-outline-secondary' }} rounded-pill">全部</a>
-                        <a href="{{ url_for('orders.my_orders', role=role, status='pending') }}" 
-                           class="btn btn-sm {{ 'btn-warning' if status == 'pending' else 'btn-outline-secondary' }} rounded-pill">
-                            <i class="bi bi-clock me-1"></i>待确认
-                        </a>
-                        <a href="{{ url_for('orders.my_orders', role=role, status='paid') }}" 
-                           class="btn btn-sm {{ 'btn-info' if status == 'paid' else 'btn-outline-secondary' }} rounded-pill">
-                            <i class="bi bi-credit-card me-1"></i>待发货
-                        </a>
-                        <a href="{{ url_for('orders.my_orders', role=role, status='shipped') }}" 
-                           class="btn btn-sm {{ 'btn-primary' if status == 'shipped' else 'btn-outline-secondary' }} rounded-pill">
-                            <i class="bi bi-truck me-1"></i>待收货
-                        </a>
-                        <a href="{{ url_for('orders.my_orders', role=role, status='completed') }}" 
-                           class="btn btn-sm {{ 'btn-success' if status == 'completed' else 'btn-outline-secondary' }} rounded-pill">
-                            <i class="bi bi-check-circle me-1"></i>已完成
-                        </a>
-                    </div>
+                
+                <!-- 重置按钮 -->
+                <div class="col-md-2 d-flex align-items-end">
+                    <a href="{{ url_for('orders.my_orders', role='buyer', status='all') }}" 
+                       class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>重置
+                    </a>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     
@@ -80,19 +60,19 @@
                 <div class="card-body p-4">
                     <div class="row align-items-center">
                         <!-- 订单信息 -->
-                        <div class="col-lg-6">
+                        <div class="col-lg-5">
                             <div class="d-flex align-items-start">
                                 <!-- 书籍封面 -->
                                 <div class="flex-shrink-0 me-3">
                                     {% if order.book.cover_image %}
                                     <img src="{{ url_for('books.uploaded_file', filename=order.book.cover_image) }}" 
                                          alt="{{ order.book.title }}"
-                                         style="width: 80px; height: 100px; object-fit: cover;"
+                                         style="width: 70px; height: 90px; object-fit: cover;"
                                          class="rounded">
                                     {% else %}
                                     <div class="bg-light rounded d-flex align-items-center justify-content-center" 
-                                         style="width: 80px; height: 100px;">
-                                        <i class="bi bi-book text-muted" style="font-size: 2rem;"></i>
+                                         style="width: 70px; height: 90px;">
+                                        <i class="bi bi-book text-muted" style="font-size: 1.5rem;"></i>
                                     </div>
                                     {% endif %}
                                 </div>
@@ -111,20 +91,14 @@
                         
                         <!-- 交易对方 -->
                         <div class="col-lg-2 col-6 mt-3 mt-lg-0">
-                            <small class="text-muted d-block">{{ '买家' if role == 'seller' else '卖家' }}</small>
+                            <small class="text-muted d-block">{{ '买家' if order.seller_id == current_user.id else '卖家' }}</small>
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-person-circle text-primary me-2"></i>
                                 <span>
-                                    {% if role == 'buyer' %}
+                                    {% if order.buyer_id == current_user.id %}
                                         {{ order.seller_order.username }}
-                                    {% elif role == 'seller' %}
-                                        {{ order.buyer.username }}
                                     {% else %}
-                                        {% if current_user.id == order.buyer_id %}
-                                            卖家: {{ order.seller_order.username }}
-                                        {% else %}
-                                            买家: {{ order.buyer.username }}
-                                        {% endif %}
+                                        {{ order.buyer.username }}
                                     {% endif %}
                                 </span>
                             </div>
@@ -136,25 +110,61 @@
                             <span class="price-tag fs-5">¥{{ order.price }}</span>
                         </div>
                         
-                        <!-- 状态 & 操作 -->
-                        <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-lg-end">
+                        <!-- 状态 -->
+                        <div class="col-lg-1 col-6 mt-3 mt-lg-0 text-center">
+                            <small class="text-muted d-block">状态</small>
                             {% if order.status == 'pending' %}
-                                <span class="badge bg-warning fs-6 mb-2">待确认</span>
+                                <span class="badge bg-warning">待确认</span>
                             {% elif order.status == 'confirmed' %}
-                                <span class="badge bg-info fs-6 mb-2">已确认</span>
+                                <span class="badge bg-info">已确认</span>
                             {% elif order.status == 'paid' %}
-                                <span class="badge bg-primary fs-6 mb-2">已付款</span>
+                                <span class="badge bg-primary">待发货</span>
                             {% elif order.status == 'shipped' %}
-                                <span class="badge bg-info fs-6 mb-2">已发货</span>
+                                <span class="badge bg-info">待收货</span>
                             {% elif order.status == 'completed' %}
-                                <span class="badge bg-success fs-6 mb-2">已完成</span>
+                                <span class="badge bg-success">已完成</span>
                             {% elif order.status == 'cancelled' %}
-                                <span class="badge bg-secondary fs-6 mb-2">已取消</span>
+                                <span class="badge bg-secondary">已取消</span>
                             {% endif %}
-                            
-                            <div>
+                        </div>
+                        
+                        <!-- 操作按钮 - 直接显示在外面 -->
+                        <div class="col-lg-2 col-6 mt-3 mt-lg-0 text-lg-end">
+                            <small class="text-muted d-block">操作</small>
+                            <div class="btn-group-vertical btn-group-sm gap-1">
+                                <!-- 买家操作 -->
+                                {% if order.buyer_id == current_user.id %}
+                                    {% if order.status == 'confirmed' %}
+                                        <a href="{{ url_for('orders.confirm_payment', order_id=order.id) }}" 
+                                           class="btn btn-primary btn-sm rounded-pill">
+                                            <i class="bi bi-credit-card me-1"></i>确认付款
+                                        </a>
+                                    {% elif order.status == 'shipped' %}
+                                        <a href="{{ url_for('orders.confirm_received', order_id=order.id) }}" 
+                                           class="btn btn-success btn-sm rounded-pill">
+                                            <i class="bi bi-check2-circle me-1"></i>确认收货
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                                
+                                <!-- 卖家操作 -->
+                                {% if order.seller_id == current_user.id %}
+                                    {% if order.status == 'pending' %}
+                                        <a href="{{ url_for('orders.confirm_order', order_id=order.id) }}" 
+                                           class="btn btn-primary btn-sm rounded-pill">
+                                            <i class="bi bi-check2 me-1"></i>确认订单
+                                        </a>
+                                    {% elif order.status == 'paid' %}
+                                        <a href="{{ url_for('orders.ship_order', order_id=order.id) }}" 
+                                           class="btn btn-info btn-sm rounded-pill">
+                                            <i class="bi bi-truck me-1"></i>确认发货
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                                
+                                <!-- 通用操作 -->
                                 <a href="{{ url_for('orders.detail', order_id=order.id) }}" 
-                                   class="btn btn-outline-primary btn-sm rounded-pill">
+                                   class="btn btn-outline-secondary btn-sm rounded-pill">
                                     <i class="bi bi-eye me-1"></i>查看详情
                                 </a>
                             </div>
@@ -170,7 +180,7 @@
         <div class="py-5">
             <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
             <h4 class="text-muted mt-3">暂无订单</h4>
-            <p class="text-muted">快去 {{ '买一本书' if role == 'buyer' else '卖一本书' }}吧！</p>
+            <p class="text-muted">快去 {{ '买一本书' if role == 'buyer' else '卖一本书' if role == 'seller' else '交易' }}吧！</p>
             <a href="{{ url_for('main.index') }}" class="btn btn-primary rounded-pill px-4">
                 <i class="bi bi-book me-2"></i>浏览书籍
             </a>
