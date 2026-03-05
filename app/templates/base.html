@@ -29,8 +29,8 @@
             min-height: 100vh;
         }
         
-        /* 导航栏 - 抖音风格 */
-        .navbar-tiktok {
+        /* 导航栏 - 校园风格 */
+        .navbar-book {
             background: var(--card-bg) !important;
             box-shadow: 0 1px 0 var(--border-color);
             padding: 12px 0;
@@ -61,8 +61,8 @@
             background: rgba(107, 76, 235, 0.1);
         }
         
-        /* 按钮 - 抖音风格 */
-        .btn-tiktok {
+        /* 按钮 - 校园风格 */
+        .btn-book {
             background: var(--primary-gradient);
             color: white;
             border: none;
@@ -72,13 +72,13 @@
             transition: all 0.2s;
         }
         
-        .btn-tiktok:hover {
+        .btn-book:hover {
             opacity: 0.9;
             color: white;
             transform: scale(1.02);
         }
         
-        .btn-tiktok-outline {
+        .btn-book-outline {
             background: transparent;
             color: var(--text-primary);
             border: 1px solid var(--border-color);
@@ -87,13 +87,13 @@
             font-weight: 500;
         }
         
-        .btn-tiktok-outline:hover {
+        .btn-book-outline:hover {
             background: var(--bg-color);
             color: var(--text-primary);
         }
         
-        /* 卡片 - 抖音风格 */
-        .card-tiktok {
+        /* 卡片 - 校园风格 */
+        .card-book {
             background: var(--card-bg);
             border: none;
             border-radius: 12px;
@@ -101,12 +101,12 @@
             overflow: hidden;
         }
         
-        .card-body-tiktok {
+        .card-body-book {
             padding: 20px;
         }
         
         /* 表单 */
-        .form-control-tiktok {
+        .form-control-book {
             border: 1px solid var(--border-color);
             border-radius: 24px;
             padding: 10px 14px;
@@ -114,17 +114,17 @@
             background: #fafafa;
         }
         
-        .form-control-tiktok::placeholder {
+        .form-control-book::placeholder {
             color: #b9b9b9;
         }
         
-        .form-control-tiktok:focus {
+        .form-control-book:focus {
             border-color: var(--primary-color);
             box-shadow: none;
             background: white;
         }
         
-        .form-select-tiktok {
+        .form-select-book {
             border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 10px 16px;
@@ -132,7 +132,7 @@
         }
         
         /* 标签 */
-        .badge-tiktok {
+        .badge-book {
             padding: 4px 12px;
             border-radius: 12px;
             font-weight: 500;
@@ -269,7 +269,7 @@
             max-width: 400px;
         }
         
-        .alert-tiktok {
+        .alert-book {
             border: none;
             border-radius: 12px;
             padding: 12px 16px;
@@ -288,7 +288,7 @@
         }
         
         /* 分页 */
-        .pagination-tiktok .page-link {
+        .pagination-book .page-link {
             border: none;
             border-radius: 16px;
             padding: 6px 14px;
@@ -297,7 +297,7 @@
             font-size: 13px;
         }
         
-        .pagination-tiktok .page-item.active .page-link {
+        .pagination-book .page-item.active .page-link {
             background: var(--primary-gradient);
             color: white;
         }
@@ -318,7 +318,7 @@
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-tiktok">
+    <nav class="navbar navbar-expand-lg navbar-book">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index') }}">
                 <i class="bi bi-book-half me-1"></i>校园二手书
@@ -347,7 +347,7 @@
                 
                 <div class="d-flex gap-2 align-items-center">
                     {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('books.create') }}" class="btn btn-tiktok py-1 px-3" style="font-size: 13px;">
+                    <a href="{{ url_for('books.create') }}" class="btn btn-book py-1 px-3" style="font-size: 13px;">
                         <i class="bi bi-plus-lg me-1"></i>发布
                     </a>
                     <div class="dropdown">
@@ -366,8 +366,8 @@
                         </ul>
                     </div>
                     {% else %}
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-tiktok-outline py-1 px-3" style="font-size: 13px;">登录</a>
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-tiktok py-1 px-3" style="font-size: 13px;">注册</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-book-outline py-1 px-3" style="font-size: 13px;">登录</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-book py-1 px-3" style="font-size: 13px;">注册</a>
                     {% endif %}
                 </div>
             </div>
@@ -379,7 +379,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-tiktok" role="alert">
+                <div class="alert alert-{{ category }} alert-book" role="alert">
                     {% if category == 'success' %}<i class="bi bi-check-circle me-2"></i>{% endif %}
                     {% if category == 'danger' %}<i class="bi bi-exclamation-circle me-2"></i>{% endif %}
                     {{ message }}

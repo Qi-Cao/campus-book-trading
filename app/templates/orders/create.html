@@ -12,8 +12,8 @@
     <h5 class="fw-bold mb-3">确认订单</h5>
     
     <!-- 书籍信息 -->
-    <div class="card-tiktok mb-3">
-        <div class="card-body-tiktok">
+    <div class="card-book mb-3">
+        <div class="card-body-book">
             <div class="d-flex">
                 {% if book.cover_image %}
                 <img src="{{ url_for('books.uploaded_file', filename=book.cover_image) }}" 
@@ -36,8 +36,8 @@
     </div>
     
     <!-- 订单表单 -->
-    <div class="card-tiktok">
-        <div class="card-body-tiktok">
+    <div class="card-book">
+        <div class="card-body-book">
             <form method="POST" action="{{ url_for('orders.create', book_id=book.id) }}">
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">成交价格</label>
@@ -51,7 +51,7 @@
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">联系方式（手机号）</label>
-                    <input type="text" name="contact_info" class="form-control-tiktok" 
+                    <input type="text" name="contact_info" class="form-control-book" 
                            placeholder="请输入您的手机号"
                            value="{{ current_user.phone or '' }}" required>
                 </div>
@@ -60,7 +60,7 @@
                     <i class="bi bi-info-circle me-1"></i>确认后，卖家将收到通知，请保持手机畅通
                 </div>
                 
-                <button type="submit" class="btn btn-tiktok w-100 py-2">
+                <button type="submit" class="btn btn-book w-100 py-2">
                     <i class="bi bi-check2-circle me-2"></i>确认下单
                 </button>
             </form>

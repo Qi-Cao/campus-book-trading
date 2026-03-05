@@ -12,27 +12,27 @@
         <h5 class="mb-0 fw-bold">编辑书籍</h5>
     </div>
     
-    <div class="card-tiktok">
-        <div class="card-body-tiktok">
+    <div class="card-book">
+        <div class="card-body-book">
             <form method="POST">
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">书名 <span class="text-danger">*</span></label>
-                    <input type="text" name="title" class="form-control-tiktok" value="{{ book.title }}" required>
+                    <input type="text" name="title" class="form-control-book" value="{{ book.title }}" required>
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">作者</label>
-                    <input type="text" name="author" class="form-control-tiktok" value="{{ book.author or '' }}">
+                    <input type="text" name="author" class="form-control-book" value="{{ book.author or '' }}">
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">ISBN</label>
-                    <input type="text" name="isbn" class="form-control-tiktok" value="{{ book.isbn or '' }}">
+                    <input type="text" name="isbn" class="form-control-book" value="{{ book.isbn or '' }}">
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">版本</label>
-                    <select name="edition" class="form-select-tiktok">
+                    <select name="edition" class="form-select-book">
                         <option value="latest" {{ 'selected' if book.edition == 'latest' else '' }}>最新版</option>
                         <option value="recent" {{ 'selected' if book.edition == 'recent' else '' }}>近几年</option>
                         <option value="old" {{ 'selected' if book.edition == 'old' else '' }}>旧版</option>
@@ -42,17 +42,17 @@
                 <div class="row mb-3">
                     <div class="col-6">
                         <label class="form-label" style="font-size: 13px;">原价（元）</label>
-                        <input type="number" name="original_price" class="form-control-tiktok" step="0.01" min="0" value="{{ book.original_price or '' }}">
+                        <input type="number" name="original_price" class="form-control-book" step="0.01" min="0" value="{{ book.original_price or '' }}">
                     </div>
                     <div class="col-6">
                         <label class="form-label" style="font-size: 13px;">挂牌价 <span class="text-danger">*</span></label>
-                        <input type="number" name="listing_price" class="form-control-tiktok" step="0.01" min="0" value="{{ book.listing_price }}" required>
+                        <input type="number" name="listing_price" class="form-control-book" step="0.01" min="0" value="{{ book.listing_price }}" required>
                     </div>
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">新旧程度</label>
-                    <select name="condition" class="form-select-tiktok">
+                    <select name="condition" class="form-select-book">
                         <option value="new" {{ 'selected' if book.condition == 'new' else '' }}>全新</option>
                         <option value="like_new" {{ 'selected' if book.condition == 'like_new' else '' }}>几乎全新</option>
                         <option value="good" {{ 'selected' if book.condition == 'good' else '' }}>较好</option>
@@ -63,7 +63,7 @@
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">分类</label>
-                    <select name="category" class="form-select-tiktok">
+                    <select name="category" class="form-select-book">
                         <option value="教材" {{ 'selected' if book.category == '教材' else '' }}>教材</option>
                         <option value="小说" {{ 'selected' if book.category == '小说' else '' }}>小说</option>
                         <option value="杂志" {{ 'selected' if book.category == '杂志' else '' }}>杂志</option>
@@ -74,11 +74,11 @@
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">描述</label>
-                    <textarea name="description" class="form-control-tiktok" rows="3">{{ book.description or '' }}</textarea>
+                    <textarea name="description" class="form-control-book" rows="3">{{ book.description or '' }}</textarea>
                 </div>
                 
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-tiktok flex-grow-1 py-2">保存修改</button>
+                    <button type="submit" class="btn btn-book flex-grow-1 py-2">保存修改</button>
                     <a href="{{ url_for('books.detail', book_id=book.id) }}" class="btn btn-light flex-grow-1 py-2">取消</a>
                 </div>
             </form>

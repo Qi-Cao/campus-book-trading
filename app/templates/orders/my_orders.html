@@ -37,29 +37,29 @@
     {% if orders %}
     <div class="d-flex flex-column gap-3">
         {% for order in orders %}
-        <div class="card-tiktok">
+        <div class="card-book">
             <!-- 状态头部 -->
             <div class="px-3 py-2" style="background: #f9fafb;">
                 <div class="d-flex justify-content-between align-items-center">
                     <small class="text-muted">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
                     {% if order.status == 'pending' %}
-                        <span class="badge-tiktok" style="background: #fef3c7; color: #92400e;">待确认</span>
+                        <span class="badge-book" style="background: #fef3c7; color: #92400e;">待确认</span>
                     {% elif order.status == 'confirmed' %}
-                        <span class="badge-tiktok" style="background: #dbeafe; color: #1e40af;">已确认</span>
+                        <span class="badge-book" style="background: #dbeafe; color: #1e40af;">已确认</span>
                     {% elif order.status == 'paid' %}
-                        <span class="badge-tiktok" style="background: #ede9fe; color: #6b4ceb;">待发货</span>
+                        <span class="badge-book" style="background: #ede9fe; color: #6b4ceb;">待发货</span>
                     {% elif order.status == 'shipped' %}
-                        <span class="badge-tiktok" style="background: #dbeafe; color: #1e40af;">待收货</span>
+                        <span class="badge-book" style="background: #dbeafe; color: #1e40af;">待收货</span>
                     {% elif order.status == 'completed' %}
-                        <span class="badge-tiktok" style="background: #d1fae5; color: #065f46;">已完成</span>
+                        <span class="badge-book" style="background: #d1fae5; color: #065f46;">已完成</span>
                     {% elif order.status == 'cancelled' %}
-                        <span class="badge-tiktok bg-secondary">已取消</span>
+                        <span class="badge-book bg-secondary">已取消</span>
                     {% endif %}
                 </div>
             </div>
             
             <!-- 订单内容 -->
-            <div class="card-body-tiktok">
+            <div class="card-body-book">
                 <div class="d-flex">
                     <!-- 书籍图片 -->
                     <a href="{{ url_for('books.detail', book_id=order.book.id) }}" class="flex-shrink-0 me-3">
@@ -151,7 +151,7 @@
         <i class="bi bi-receipt"></i>
         <h5 class="mt-3" style="color: #8a8b8c;">还没有订单哦</h5>
         <p class="text-muted">快去 {{ '买一本书' if role == 'buyer' else '卖一本书' if role == 'seller' else '逛逛' }}吧！</p>
-        <a href="{{ url_for('main.index') }}" class="btn btn-tiktok">
+        <a href="{{ url_for('main.index') }}" class="btn btn-book">
             去逛逛
         </a>
     </div>

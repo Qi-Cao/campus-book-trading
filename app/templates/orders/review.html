@@ -12,8 +12,8 @@
     <h5 class="fw-bold mb-3">评价订单</h5>
     
     <!-- 订单信息 -->
-    <div class="card-tiktok mb-3">
-        <div class="card-body-tiktok">
+    <div class="card-book mb-3">
+        <div class="card-body-book">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="text-muted">书籍</span>
                 <span class="fw-medium">{{ order.book.title }}</span>
@@ -30,8 +30,8 @@
     </div>
     
     <!-- 评价表单 -->
-    <div class="card-tiktok">
-        <div class="card-body-tiktok">
+    <div class="card-book">
+        <div class="card-body-book">
             <form method="POST">
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">评分</label>
@@ -47,10 +47,10 @@
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">评价内容（可选）</label>
-                    <textarea name="content" class="form-control-tiktok" rows="3" placeholder="分享你的购买体验..."></textarea>
+                    <textarea name="content" class="form-control-book" rows="3" placeholder="分享你的购买体验..."></textarea>
                 </div>
                 
-                <button type="submit" class="btn btn-tiktok w-100 py-2">提交评价</button>
+                <button type="submit" class="btn btn-book w-100 py-2">提交评价</button>
             </form>
         </div>
     </div>

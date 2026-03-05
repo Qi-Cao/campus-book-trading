@@ -34,8 +34,8 @@
     <div class="d-flex flex-column gap-3">
         {% for book in books %}
         <a href="{{ url_for('books.detail', book_id=book.id) }}" class="text-decoration-none">
-            <div class="card-tiktok">
-                <div class="card-body-tiktok">
+            <div class="card-book">
+                <div class="card-body-book">
                     <div class="d-flex">
                         <!-- 书籍图片 -->
                         <div class="flex-shrink-0 me-3">
@@ -56,13 +56,13 @@
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="book-title" style="font-size: 14px;">{{ book.title }}</div>
                                 {% if book.status == 'available' %}
-                                <span class="badge-tiktok" style="background: #d1fae5; color: #065f46;">在售</span>
+                                <span class="badge-book" style="background: #d1fae5; color: #065f46;">在售</span>
                                 {% elif book.status == 'reserved' %}
-                                <span class="badge-tiktok" style="background: #fef3c7; color: #92400e;">已预订</span>
+                                <span class="badge-book" style="background: #fef3c7; color: #92400e;">已预订</span>
                                 {% elif book.status == 'sold' %}
-                                <span class="badge-tiktok" style="background: #f3f4f6; color: #6b7280;">已售出</span>
+                                <span class="badge-book" style="background: #f3f4f6; color: #6b7280;">已售出</span>
                                 {% else %}
-                                <span class="badge-tiktok bg-secondary">已下架</span>
+                                <span class="badge-book bg-secondary">已下架</span>
                                 {% endif %}
                             </div>
                             <div class="text-muted" style="font-size: 12px;">{{ book.author or '未知作者' }}</div>

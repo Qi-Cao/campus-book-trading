@@ -23,19 +23,19 @@
     <!-- 统计 -->
     <div class="row g-2 mb-3">
         <div class="col-4">
-            <div class="card-tiktok p-3 text-center">
+            <div class="card-book p-3 text-center">
                 <div class="fw-bold" style="color: #6b4ceb;">{{ stats.total_books }}</div>
                 <small class="text-muted">在售</small>
             </div>
         </div>
         <div class="col-4">
-            <div class="card-tiktok p-3 text-center">
+            <div class="card-book p-3 text-center">
                 <div class="fw-bold" style="color: #34d399;">{{ stats.total_users }}</div>
                 <small class="text-muted">用户</small>
             </div>
         </div>
         <div class="col-4">
-            <div class="card-tiktok p-3 text-center">
+            <div class="card-book p-3 text-center">
                 <div class="fw-bold" style="color: #60a5fa;">{{ stats.total_orders }}</div>
                 <small class="text-muted">成交</small>
             </div>
@@ -96,7 +96,7 @@
 
     <!-- 分页 -->
     {% if books.pages > 1 %}
-    <nav class="mt-4 pagination-tiktok d-flex justify-content-center">
+    <nav class="mt-4 pagination-book d-flex justify-content-center">
         {% if books.has_prev %}
         <a class="page-link" href="{{ url_for('main.index', page=books.prev_num, search=search, category=selected_category) }}">
             <i class="bi bi-chevron-left"></i>

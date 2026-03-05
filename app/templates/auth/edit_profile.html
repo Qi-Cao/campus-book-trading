@@ -12,17 +12,17 @@
     <h5 class="fw-bold mb-3">编辑资料</h5>
     
     <!-- 表单 -->
-    <div class="card-tiktok">
-        <div class="card-body-tiktok">
+    <div class="card-book">
+        <div class="card-body-book">
             <form method="POST">
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">手机号</label>
-                    <input type="text" name="phone" class="form-control-tiktok" value="{{ current_user.phone or '' }}">
+                    <input type="text" name="phone" class="form-control-book" value="{{ current_user.phone or '' }}">
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">学号</label>
-                    <input type="text" name="student_id" class="form-control-tiktok" value="{{ current_user.student_id or '' }}">
+                    <input type="text" name="student_id" class="form-control-book" value="{{ current_user.student_id or '' }}">
                 </div>
                 
                 <hr>
@@ -31,10 +31,10 @@
                 
                 <div class="mb-3">
                     <label class="form-label" style="font-size: 13px;">新密码</label>
-                    <input type="password" name="new_password" class="form-control-tiktok" placeholder="留空则不修改">
+                    <input type="password" name="new_password" class="form-control-book" placeholder="留空则不修改">
                 </div>
                 
-                <button type="submit" class="btn btn-tiktok w-100 py-2">保存</button>
+                <button type="submit" class="btn btn-book w-100 py-2">保存</button>
             </form>
         </div>
     </div>
